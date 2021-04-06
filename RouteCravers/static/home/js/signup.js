@@ -62,7 +62,7 @@ $("#otp_form").submit(function (e) {
     var serializedData = $(this).serialize();
     $.ajax({
         type: 'POST',
-        url: "otp/verify/",
+        url: "otp/verify/register/",
         data: serializedData,
         success: function (response) {
             document.getElementById("otp_verification").style.display="none"
@@ -83,7 +83,7 @@ function resend_otp(){
     serializedData='email='+ email
     $.ajax({
         type: 'GET',
-        url: "otp/resend/",
+        url: "otp/resend/register/",
         data: serializedData,
         success: function (response) {
             document.getElementById("error1").innerHTML="We have sent a new OTP, Check it...";

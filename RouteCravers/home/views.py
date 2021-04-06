@@ -59,6 +59,13 @@ def login_request(request):
                     return JsonResponse({"error": "Invalid Credentials"}, status=400)
             except:
                 return JsonResponse({"error": "Invalid Credentials"}, status=400)
+        try:
+            if user.is_staff==False:
+                p=Profile.objects.get(user=user)
+                if p.account_banned==True:
+                    return JsonResponse({"error": "This account has been banned"}, status=400)
+        except:
+            return JsonResponse({"error": "Profile Not Found"}, status=400)
         login(request,user)
         return JsonResponse({"success": ""}, status=200)
     else:
@@ -100,21 +107,21 @@ def signup(request):
             user=User.objects.get(email=email)
             user.is_active=False
             user.save()
-            send_otp(email)
+            otp=generate_otp()
+            message = f'Hi user, thank you for creating account, your otp is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+            send_otp(email,message,otp)
             return JsonResponse({"success": ""}, status=200)
         else:
             return JsonResponse({"error": str(form.errors)}, status=400)
     else:
         return render(request,"home/signup.html",context={})
     
-def send_otp(email):
+def send_otp(email,message,otp):
     try:
         user=User.objects.get(email=email)
     except:
         return False
-    otp=generate_otp()
     subject = 'OTP for email verification in Route Cravers'
-    message = f'Hi user, thank you for creating account, your otp is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
     Email_thread(subject,message,email).start()
     try:
         u=Profile.objects.get(user=user)
@@ -126,15 +133,20 @@ def send_otp(email):
         u.save()
     return True
 
-def resend_otp(request):
+def resend_otp(request,item):
     if request.method =='GET' and request.is_ajax:
         email=request.GET.get('email')
-        send_otp(email)
+        otp=generate_otp()
+        if str(item)=="register":
+            message = f'Hi user, thank you for creating account, your otp is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+        elif str(item)=="reset_password":
+            message = f'Hi user, your otp for reseting password is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+        send_otp(email,message,otp)
         return JsonResponse({"success": ""}, status=200)
     else:
         return redirect('home')
 
-def verify_otp(request):
+def verify_otp(request,item):
     if request.method=='POST' and request.is_ajax:
         email=request.POST.get('email')
         otp=request.POST.get('otp')
@@ -165,7 +177,12 @@ def verify_otp(request):
                     except:
                         return JsonResponse({"error": "Some error in this registration, try signing up again"}, status=400)
                 else:
-                    send_otp(email)
+                    otp=generate_otp()
+                    if str(item)=="register":
+                        message = f'Hi user, thank you for creating account, your otp is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+                    elif str(item)=="reset_password":
+                        message = f'Hi user, your otp for reseting password is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+                    send_otp(email,message,otp)
                     return JsonResponse({"error": "Time limit exceeded, a new OTP is sent"}, status=400)
             else:
                 return JsonResponse({"error": "Invalid OTP"}, status=400)
@@ -185,3 +202,44 @@ def logout_request(request):
     if request.user.is_authenticated:
         logout(request)
     return redirect('home')
+
+def reset_password(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    if request.method=="POST" and request.is_ajax:
+        email=request.POST.get('email')
+        try:
+            u=User.objects.get(email=email)
+        except:
+            return JsonResponse({"success": ""}, status=200)
+        if u.is_active==False:
+            return JsonResponse({"error": "The email associated with this account has not been verified."}, status=400)
+        try:
+            p=Profile.objects.get(user=u)
+        except:
+            return JsonResponse({"error": "Getting error in searching this account profile in database. Contact Administrator"}, status=400)
+        if p.account_banned==True:
+            return JsonResponse({"error": "This account has been banned, you don not have permission to change password."}, status=400)
+        otp=generate_otp()
+        message = f'Hi user, your otp for reseting password is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
+        send_otp(email,message,otp)
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        return render(request,"home/change_password.html",context={})
+    
+def new_password(request):
+    if request.method=="POST" and request.is_ajax:
+        email=request.POST.get("email")
+        password=request.POST.get("password2")
+        try:
+            user=User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+        except:
+            return JsonResponse({"error": "Error in fetching user or unable to change Password"}, status=400)
+        subject = 'Password changed in Clean Frame'
+        message = f'Hi user, password has been successfully changed.\nThanks'
+        Email_thread(subject,message,email).start()
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        return redirect('home')
