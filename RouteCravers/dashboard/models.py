@@ -39,3 +39,14 @@ class Terminal(models.Model):
     
     def __str__(self):
         return str(self.name)
+    
+class Bus(models.Model):
+    name=models.CharField(max_length=1000, null=True)
+    RTO_number=models.CharField(max_length=20, null=True)
+    details=models.ForeignKey(BusDetails, on_delete=models.SET_NULL, null=True, blank=True)
+    seats=models.IntegerField(default=100)
+    active=models.BooleanField(default=True)
+    last_edit=models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return str(self.RTO_number)
