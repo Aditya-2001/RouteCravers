@@ -13,6 +13,8 @@ from random import choice
 import os
 from django.http import FileResponse
 from threading import *
+from django.http import JsonResponse
+from django.core import serializers
 
 class Email_thread(Thread):
     def __init__(self,subject,message,email):
@@ -29,6 +31,34 @@ def home(request):
     return render(request,"home/home.html",context={})
 
 def login_request(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    if request.method=='POST' and request.is_ajax:
+        useremail=request.POST.get('user_email')
+        password=request.POST.get('password')
+        try:
+            checker = User.objects.get(username=useremail)
+            user = authenticate(request, username=useremail, password=password)
+            if user is not None:
+                pass
+            else:
+                return JsonResponse({"error": "Invalid Credentials"}, status=400)
+        except:
+            try:
+                checker = User.objects.get(email=useremail)
+                user = authenticate(request, username=checker.username, password=password)
+                if user is not None:
+                    pass
+                else:
+                    return JsonResponse({"error": "Invalid Credentials"}, status=400)
+            except:
+                return JsonResponse({"error": "Invalid Credentials"}, status=400)
+        login(request,user)
+        return redirect("dashboard")
+    else:
+        return render(request,"home/login.html",context={})
+
+def login_request1(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     if request.method=='POST':
