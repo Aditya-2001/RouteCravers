@@ -81,3 +81,9 @@ class DateWiseBusSchedule(models.Model):
     departure_date=models.DateTimeField(default=datetime.datetime.now())
     seats_opted=ArrayField(models.IntegerField(default=0),size=100)
     
+class Stop(models.Model):
+    schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
+    terminal=models.ForeignKey(Terminal, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    distance_from_source=models.FloatField(default=0.0)
+    #in Km
