@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 import datetime
 
 # Create your models here.
-class BusDetails(models.Model):
+class BusDetail(models.Model):
     #Assuming time is in minutes
     
     accomodation_code=models.IntegerField(default=0)
@@ -43,10 +43,22 @@ class Terminal(models.Model):
 class Bus(models.Model):
     name=models.CharField(max_length=1000, null=True)
     RTO_number=models.CharField(max_length=20, null=True)
-    details=models.ForeignKey(BusDetails, on_delete=models.SET_NULL, null=True, blank=True)
+    details=models.ForeignKey(BusDetail, on_delete=models.SET_NULL, null=True, blank=True)
     seats=models.IntegerField(default=100)
     active=models.BooleanField(default=True)
     last_edit=models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return str(self.RTO_number)
+    
+class Schedule(models.Model):
+    source=models.ForeignKey(Terminal, on_delete=models.SET_NULL, null=True, blank=True, related_name="source")
+    destination=models.ForeignKey(Terminal, on_delete=models.SET_NULL, null=True, blank=True, related_name="destination")
+    
+    distance=models.FloatField(default=10.0)
+    #In Km
+    
+    def __str__(self):
+        return str(self.source)+" , "+str(self.destination)
+    
+    
