@@ -25,7 +25,7 @@ SECRET_KEY = 'oa&g)(pey92^e(frtsziw_)-*9k-!a*$w709-i$ki&=iwsbt6f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -50,6 +50,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #Simpified static file serving.
+    #https://warehouse.python.org/project/whitenoise/
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'RouteCravers.urls'
@@ -130,11 +133,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'cleanframeiiit@gmail.com'
-EMAIL_HOST_PASSWORD = 'clean_frame'
+EMAIL_HOST_USER = 'routecravers@gmail.com'
+EMAIL_HOST_PASSWORD = 'a.sdf123@'
 
 PHONE_ACCOUNT_SID_TWILIO = 'AC664c999bbd47f05aaf38b3e6e3ef03b8'
 PHONE_ACCOUNT_AUTH_TOKEN_TWILIO = '5d8023dfc538060aa968afe037b637ec'
 PHONE_NUMBER_TWILIO = '+17737565047'
 
-OTP_EXPIRE_TIME=1
+OTP_EXPIRE_TIME=16
