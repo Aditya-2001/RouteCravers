@@ -25,5 +25,17 @@ class BusDetails(models.Model):
     addition_deduction_rate=models.IntegerField(default=30)
     #Rate of additional deduction
     
+    last_edit=models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return str(self.id)
+    
+class Terminal(models.Model):
+    name=models.CharField(max_length=1000, null=True)
+    city=models.CharField(max_length=1000, null=True)
+    state=models.CharField(max_length=1000, null=True)
+    terminal_code=models.CharField(max_length=1000, null=True)
+    last_edit=models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return str(self.name)
