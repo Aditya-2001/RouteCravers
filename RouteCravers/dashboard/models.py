@@ -87,3 +87,20 @@ class Stop(models.Model):
     
     distance_from_source=models.FloatField(default=0.0)
     #in Km
+    
+class UserTicket(models.Model):
+    source_stop=models.ForeignKey(Stop, on_delete=models.SET_NULL, null=True, blank=True, related_name="source_stop")
+    destination_stop=models.ForeignKey(Stop, on_delete=models.SET_NULL, null=True, blank=True, related_name="destination_stop")
+    user=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date_wise_schedule=models.ForeignKey(DateWiseBusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
+    seats_booked=models.IntegerField(default=0)
+    
+    booking_status=models.IntegerField(default=0)
+    #1-booked
+    #2-cancelled
+    #3-refunded
+    
+    fare=models.FloatField(default=0.0)
+    
+    def __str__(self):
+        return str(self.user)

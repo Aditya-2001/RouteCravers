@@ -7,4 +7,5 @@ admin.site.register(Bus)
 admin.site.register(Schedule)
 admin.site.register(BusSchedule)
 admin.site.register(DateWiseBusSchedule)
-
+admin.site.register(Stop)
+admin.site.register(UserTicket)
