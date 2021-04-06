@@ -115,7 +115,6 @@ def send_otp(email):
     otp=generate_otp()
     subject = 'OTP for email verification in Route Cravers'
     message = f'Hi user, thank you for creating account, your otp is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
-    print("OTP send\n\n\n")
     Email_thread(subject,message,email).start()
     try:
         u=Profile.objects.get(user=user)
@@ -126,6 +125,14 @@ def send_otp(email):
         u=Profile.objects.create(user=user, otp=str(otp), otp_time=datetime.datetime.now())
         u.save()
     return True
+
+def resend_otp(request):
+    if request.method =='GET' and request.is_ajax:
+        email=request.GET.get('email')
+        send_otp(email)
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        return redirect('home')
 
 def verify_otp(request):
     if request.method=='POST' and request.is_ajax:

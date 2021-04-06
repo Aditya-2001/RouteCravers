@@ -11,3 +11,6 @@ class Profile(models.Model):
     otp_time=models.DateTimeField(default=datetime.datetime.now())
     otp=models.CharField(max_length=100, null=True)
     signup_date=models.DateTimeField(default=datetime.datetime.now())
+    
+    def __str__(self):
+        return str(self.user)

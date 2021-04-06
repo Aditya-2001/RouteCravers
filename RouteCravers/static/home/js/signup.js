@@ -15,7 +15,6 @@ $("#signup_form").submit(function (e) {
             $("#signup_form").trigger('reset');
             document.getElementById("details_entering").style.display="none"
             document.getElementById("otp_verification").style.display="block"
-            alert("Signup is Successfull")
         },
         error: function (response) {
             document.getElementById("inputPassword").value=""
@@ -66,7 +65,8 @@ $("#otp_form").submit(function (e) {
         url: "otp/verify/",
         data: serializedData,
         success: function (response) {
-            call_ajax_for_login_page()
+            document.getElementById("otp_verification").style.display="none"
+            document.getElementById("redirection").style.display="block"
         },
         error: function (response) {
             document.getElementById("otp").value=""
@@ -78,6 +78,22 @@ $("#otp_form").submit(function (e) {
     })
 })
 
-function call_ajax_for_login_page(){
-    alert("account_created")
+function resend_otp(){
+    email=document.getElementById("inputEmail1").value
+    serializedData='email='+ email
+    $.ajax({
+        type: 'GET',
+        url: "otp/resend/",
+        data: serializedData,
+        success: function (response) {
+            document.getElementById("error1").innerHTML="We have sent a new OTP, Check it...";
+            $('#error1').fadeIn();
+            $('#error1').delay(1000).fadeOut(500);
+        },
+        error: function (response) {
+            document.getElementById("error1").innerHTML="Unable to send OTP...";
+            $('#error1').fadeIn();
+            $('#error1').delay(1000).fadeOut(500);
+        }
+    })
 }
