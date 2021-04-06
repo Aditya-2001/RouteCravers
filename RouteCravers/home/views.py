@@ -214,12 +214,13 @@ def reset_password(request):
             return JsonResponse({"success": ""}, status=200)
         if u.is_active==False:
             return JsonResponse({"error": "The email associated with this account has not been verified."}, status=400)
-        try:
-            p=Profile.objects.get(user=u)
-        except:
-            return JsonResponse({"error": "Getting error in searching this account profile in database. Contact Administrator"}, status=400)
-        if p.account_banned==True:
-            return JsonResponse({"error": "This account has been banned, you don not have permission to change password."}, status=400)
+        if u.is_staff==False:
+            try:
+                    p=Profile.objects.get(user=u)
+            except:
+                return JsonResponse({"error": "Getting error in searching this account profile in database. Contact Administrator"}, status=400)
+            if p.account_banned==True:
+                return JsonResponse({"error": "This account has been banned, you don not have permission to change password."}, status=400)
         otp=generate_otp()
         message = f'Hi user, your otp for reseting password is ' + str(otp) + ', do not share it with anyone.\nIt will expire in 15 minutes.\nThanks'
         send_otp(email,message,otp)
