@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class BusDetail(models.Model):
@@ -61,4 +62,22 @@ class Schedule(models.Model):
     def __str__(self):
         return str(self.source)+" , "+str(self.destination)
     
+    
+class BusSchedule(models.Model):
+    bus=models.ForeignKey(Bus, on_delete=models.SET_NULL, null=True, blank=True)
+    fare=models.FloatField(default=50.0, null=True)
+    reverse_route=models.BooleanField(default=False)
+    bus_number=models.CharField(max_length=10, null=True)
+    schedule=models.ForeignKey(Schedule, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    departure_day=models.IntegerField(default=0)
+    #1-Monday, 2-Tuesday, 3-Wednesday, 4-Thursday, 5-Friday, 6-Saturday, 7-Sunday
+    
+    departure_time=models.DateTimeField(default=datetime.datetime.now())
+    last_edit=models.DateTimeField(auto_now=True)
+
+class DateWiseBusSchedule(models.Model):
+    schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
+    departure_date=models.DateTimeField(default=datetime.datetime.now())
+    seats_opted=ArrayField(models.IntegerField(default=0),size=100)
     

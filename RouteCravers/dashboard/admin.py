@@ -5,4 +5,6 @@ admin.site.register(BusDetail)
 admin.site.register(Terminal)
 admin.site.register(Bus)
 admin.site.register(Schedule)
+admin.site.register(BusSchedule)
+admin.site.register(DateWiseBusSchedule)
 
