@@ -91,3 +91,55 @@ def get_bus_details(request):
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
     return redirect('bus_details')
+
+def terminal_details(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "POST" and request.is_ajax:
+            try:
+                name=request.POST.get('name')
+                city=request.POST.get('city')
+                state=request.POST.get('state')
+                terminal_code=request.POST.get('terminal_code')
+                type_=request.POST.get('type')
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if int(type_)== 1:
+                try:
+                    Terminal.objects.get(name=name,
+                                         city=city,
+                                         state=state,
+                                         terminal_code=terminal_code)
+                    return JsonResponse({"error": "Terminal Details with the given accomodation already exists"}, status=400)
+                except:
+                    pass
+                Terminal.objects.create(name=name,
+                                     city=city,
+                                     state=state,
+                                     terminal_code=terminal_code)
+                return JsonResponse({"success": ""}, status=200)
+            elif int(type_) == 2:
+                try:
+                    details=BusDetail.objects.get(accomodation_code=accomodation_code)
+                except:
+                    return JsonResponse({"error": "Terminal Details with the given accomodation donot exists"}, status=400)
+                details.accomodation_code=accomodation_code
+                details.accomodation_name=accomodation_name
+                details.multiplier=multiplier
+                details.refund_percentage=refund_percentage
+                details.no_refund_time=no_refund_time
+                details.min_refund_time=min_refund_time
+                details.addition_deduction_rate=addition_deduction_rate
+                details.addition_deduction_percentage=addition_deduction_percentage
+                details.save()
+                return JsonResponse({"success": ""}, status=200)
+            else:
+                return JsonResponse({"error": "Internal Error"}, status=400)
+            
+        else:
+            data=Terminal.objects.all()
+            return render(request,"dashboard/terminal_details.html",context={"data": data})
+        
+    else:
+        return redirect('home')
