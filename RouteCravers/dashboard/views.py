@@ -86,7 +86,6 @@ def get_bus_details(request):
         try:
             data=BusDetail.objects.get(id=int(id))
             serialized_data=serializers.serialize('json', [data])
-            print(serialized_data)
             return JsonResponse({"data": serialized_data}, status=200)
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
@@ -120,18 +119,15 @@ def terminal_details(request):
                                      terminal_code=terminal_code)
                 return JsonResponse({"success": ""}, status=200)
             elif int(type_) == 2:
+                pk=int(request.POST.get('pk_id'))
                 try:
-                    details=BusDetail.objects.get(accomodation_code=accomodation_code)
+                    details=Terminal.objects.get(id=pk)
                 except:
                     return JsonResponse({"error": "Terminal Details with the given accomodation donot exists"}, status=400)
-                details.accomodation_code=accomodation_code
-                details.accomodation_name=accomodation_name
-                details.multiplier=multiplier
-                details.refund_percentage=refund_percentage
-                details.no_refund_time=no_refund_time
-                details.min_refund_time=min_refund_time
-                details.addition_deduction_rate=addition_deduction_rate
-                details.addition_deduction_percentage=addition_deduction_percentage
+                details.name=name
+                details.city=city
+                details.state=state
+                details.terminal_code=terminal_code
                 details.save()
                 return JsonResponse({"success": ""}, status=200)
             else:
@@ -143,3 +139,14 @@ def terminal_details(request):
         
     else:
         return redirect('home')
+    
+def get_terminal_details(request):
+    if request.method == "GET" and request.is_ajax:
+        id=request.GET.get('id')
+        try:
+            data=Terminal.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            return JsonResponse({"data": serialized_data}, status=200)
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('terminal_details')

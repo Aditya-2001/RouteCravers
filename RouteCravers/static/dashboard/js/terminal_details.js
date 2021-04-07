@@ -43,14 +43,11 @@ function open_edit_modal(id){
             data=response.data
             // alert(data)
             data=JSON.parse(data)[0]
-            document.getElementById("accomodation_code1").value = data.fields.accomodation_code
-            document.getElementById("accomodation_name1").value = data.fields.accomodation_name
-            document.getElementById("multiplier1").value = data.fields.multiplier
-            document.getElementById("refund_percentage1").value = data.fields.refund_percentage
-            document.getElementById("no_refund_time1").value = data.fields.no_refund_time
-            document.getElementById("min_refund_time1").value = data.fields.min_refund_time
-            document.getElementById("addition_deduction_percentage1").value = data.fields.addition_deduction_percentage
-            document.getElementById("addition_deduction_rate1").value = data.fields.addition_deduction_rate
+            document.getElementById("name1").value = data.fields.name
+            document.getElementById("city1").value = data.fields.city
+            document.getElementById("state1").value = data.fields.state
+            document.getElementById("terminal_code1").value = data.fields.terminal_code
+            document.getElementById("pk_id").value = id
         },
         error: function (response) {
             document.getElementById("message1").innerHTML=response["responseJSON"]["error"];
@@ -71,22 +68,19 @@ $("#edit_form").submit(function (e) {
         url: "",
         data: serializedData,
         success: function (response) {
-            document.getElementById("message1").innerHTML="Bus Detail Updated successfully";
+            document.getElementById("message1").innerHTML="Terminal Detail Updated successfully";
             $('#message1').fadeIn();
             $('#message1').delay(4000).fadeOut(4000);
             document.getElementById("edit_button").disabled = false;
-            node=document.getElementById(document.getElementById("accomodation_code1").value)
+            node=document.getElementById(document.getElementById("pk_id").value)
             node.remove()
             tableBody = $("table tbody")
             markup=`<tr>
-                    <td>`+document.getElementById("accomodation_code1").value+`</td>
-                    <td>`+document.getElementById("accomodation_name1").value+`</td>
-                    <td>`+document.getElementById("multiplier1").value+`</td>
-                    <td>`+document.getElementById("refund_percentage1").value+`</td>
-                    <td>`+document.getElementById("no_refund_time1").value+`</td>
-                    <td>`+document.getElementById("min_refund_time1").value+`</td>
-                    <td>`+document.getElementById("addition_deduction_percentage1").value+`</td>
-                    <td>`+document.getElementById("addition_deduction_rate1").value+`</td>
+                    <td>-</td>
+                    <td>`+document.getElementById("name1").value+`</td>
+                    <td>`+document.getElementById("city1").value+`</td>
+                    <td>`+document.getElementById("state1").value+`</td>
+                    <td>`+document.getElementById("terminal_code1").value+`</td>
                     <td>Just Now</td>
                     <td>-</td>
                 </tr>    `
