@@ -43,7 +43,7 @@ class Terminal(models.Model):
     last_edit=models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return str(self.name)
+        return str(self.id)
     
 class Bus(models.Model):
     name=models.CharField(max_length=1000, null=True)
@@ -77,7 +77,7 @@ class BusSchedule(models.Model):
     departure_day=models.IntegerField(default=0)
     #1-Monday, 2-Tuesday, 3-Wednesday, 4-Thursday, 5-Friday, 6-Saturday, 7-Sunday
     
-    departure_time=models.DateTimeField(default=datetime.datetime.now())
+    departure_time=models.TimeField(default=datetime.datetime.now().time())
     last_edit=models.DateTimeField(auto_now=True)
 
 class DateWiseBusSchedule(models.Model):

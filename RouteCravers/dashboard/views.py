@@ -82,6 +82,8 @@ def bus_details(request):
     
 def get_bus_details(request):
     if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
         id=request.GET.get('id')
         try:
             data=BusDetail.objects.get(id=int(id))
@@ -142,6 +144,8 @@ def terminal_details(request):
     
 def get_terminal_details(request):
     if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
         id=request.GET.get('id')
         try:
             data=Terminal.objects.get(id=int(id))
@@ -157,12 +161,13 @@ def manage_buses(request):
             return redirect('dashboard')
         if request.method == "POST" and request.is_ajax:
             try:
+                type_=request.POST.get('type')
                 name=request.POST.get('name')
-                RTO_number=request.POST.get('RTO_number')
+                if int(type_)==1:
+                    RTO_number=request.POST.get('RTO_number')
                 seats=int(request.POST.get('seats'))
                 active=request.POST.get('active')
                 details=int(request.POST.get('details'))
-                type_=request.POST.get('type')
                 if int(active)==1:
                     active=True
                 else:
@@ -190,7 +195,6 @@ def manage_buses(request):
                 except:
                     return JsonResponse({"error": "Bus Details with the given details donot exists"}, status=400)
                 details.name=name
-                details.RTO_number=RTO_number
                 details.seats=seats
                 details.active=active
                 details.details=bus_details
@@ -209,6 +213,8 @@ def manage_buses(request):
     
 def get_manage_buses(request):
     if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
         id=request.GET.get('id')
         try:
             data=Bus.objects.get(id=int(id))
@@ -217,3 +223,132 @@ def get_manage_buses(request):
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
     return redirect('manage_buses')
+
+def manage_schedules(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "POST" and request.is_ajax:
+            try:
+                type_=request.POST.get('type')
+                if int(type_)==1:
+                    source=Terminal.objects.get(id=int(request.POST.get('source')))
+                    destination=Terminal.objects.get(id=int(request.POST.get('destination')))
+                distance=float(request.POST.get('distance'))
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if int(type_)== 1:
+                try:
+                    Schedule.objects.get(source=source, destination=destination)
+                    return JsonResponse({"error": "Route already exists with given source and destination."}, status=400)
+                except:
+                    pass
+                Schedule.objects.create(source=source, 
+                                        destination=destination, 
+                                        distance=distance)
+                return JsonResponse({"success": ""}, status=200)
+            elif int(type_) == 2:
+                pk=int(request.POST.get('pk_id'))
+                try:
+                    details=Schedule.objects.get(id=pk)
+                except:
+                    return JsonResponse({"error": "Schedule with the given details donot exists"}, status=400)
+                details.distance=distance
+                details.save()
+                return JsonResponse({"success": ""}, status=200)
+            else:
+                return JsonResponse({"error": "Internal Error"}, status=400)
+            
+        else:
+            data=Schedule.objects.all()
+            terminal_details=Terminal.objects.all()
+            return render(request,"dashboard/manage_schedules.html",context={"data": data, "terminal_details": terminal_details})
+        
+    else:
+        return redirect('home')
+    
+def get_manage_schedules(request):
+    if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        id=request.GET.get('id')
+        try:
+            data=Schedule.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            return JsonResponse({"data": serialized_data}, status=200)
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('manage_schedules')
+
+def manage_bus_schedules(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "POST" and request.is_ajax:
+            try:
+                type_=request.POST.get('type')
+                departure_day=int(request.POST.get('departure_day'))
+                departure_time=request.POST.get('departure_time')
+                fare=float(request.POST.get('fare'))
+                if int(type_)==1:
+                    schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
+                    bus=Bus.objects.get(id=int(request.POST.get('bus')))
+                    departure_timeR=request.POST.get('departure_timeR')
+                    departure_dayR=int(request.POST.get('departure_dayR'))
+                    busR=Bus.objects.get(id=int(request.POST.get('busR')))
+                    
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if int(type_)== 1:
+                x=BusSchedule.objects.create(schedule=schedule, 
+                                        bus=bus, 
+                                        fare=fare,
+                                        reverse_route=False,
+                                        departure_day=departure_day,
+                                        departure_time=departure_time)
+                x1=BusSchedule.objects.create(schedule=schedule, 
+                                        bus=busR, 
+                                        fare=fare,
+                                        reverse_route=True,
+                                        departure_day=departure_dayR,
+                                        departure_time=departure_timeR)
+                x.bus_number=x.id
+                x.save()
+                x1.bus_number=x1.id
+                x1.save()
+                return JsonResponse({"success": ""}, status=200)
+            elif int(type_) == 2:
+                pk=int(request.POST.get('pk_id'))
+                try:
+                    details=BusSchedule.objects.get(id=pk)
+                except:
+                    return JsonResponse({"error": "Bus Schedule with the given details donot exists"}, status=400)
+                details.departure_time=departure_time
+                details.departure_day=departure_day
+                details.fare=fare
+                details.save()
+                return JsonResponse({"success": ""}, status=200)
+            else:
+                return JsonResponse({"error": "Internal Error"}, status=400)
+            
+        else:
+            data=BusSchedule.objects.all()
+            bus_details=Bus.objects.all()
+            schedule=Schedule.objects.all()
+            return render(request,"dashboard/manage_bus_schedules.html",context={"data": data, "schedule": schedule, "bus_details": bus_details})
+        
+    else:
+        return redirect('home')
+    
+def get_manage_bus_schedules(request):
+    if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        id=request.GET.get('id')
+        try:
+            data=BusSchedule.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            return JsonResponse({"data": serialized_data}, status=200)
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('manage_schedules')

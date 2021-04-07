@@ -12,6 +12,7 @@
         <link href="{% static 'dashboard/css/styles.css' %}" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        {% block title %}{% endblock %}
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -104,6 +105,14 @@
                             <a class="nav-link" href="{% url 'manage_buses' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 Manage Buses
+                            </a>
+                            <a class="nav-link" href="{% url 'manage_schedules' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                Manage Schedules
+                            </a>
+                            <a class="nav-link" href="{% url 'manage_bus_schedules' %}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                Manage Bus Schedules
                             </a>
                             
                             <a class="nav-link" href="sdfgh">

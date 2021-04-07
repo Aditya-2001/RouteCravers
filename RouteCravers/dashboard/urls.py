@@ -9,6 +9,11 @@ urlpatterns = [
     path('terminal/details/get/',views.get_terminal_details,name="get_terminal_details"),
     path('manage/bus/details/',views.manage_buses,name="manage_buses"),
     path('manage/bus/details/get/',views.get_manage_buses,name="get_manage_buses"),
+    path('manage/schedule/details/',views.manage_schedules,name="manage_schedules"),
+    path('manage/schedule/details/get/',views.get_manage_schedules,name="get_manage_schedules"),
+    path('manage/bus/schedule/details/',views.manage_bus_schedules,name="manage_bus_schedules"),
+    path('manage/bus/schedule/details/get/',views.get_manage_bus_schedules,name="get_manage_bus_schedules"),
+    
     
     
     

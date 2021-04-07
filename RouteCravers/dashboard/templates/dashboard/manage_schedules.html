@@ -1,0 +1,154 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    Schedule Details
+{% endblock %}
+
+{% block path %}
+    Dashboard / Schedule / Details
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Schedule Details Table
+        <button onclick="document.getElementById('add_entry').style.display='block'" class="btn btn-sm btn-primary" style="float: right;">Add</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Distance (in Km)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Distance (in Km)</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr id={{each.id}}>
+                            <td>{{each.id}}</td>
+                            <td>{{each.source.name}} , {{each.source.terminal_code}}</td>
+                            <td>{{each.destination.name}} , {{each.destination.terminal_code}}</td>
+                            <td>{{each.distance}}</td>
+                            <td><button class="btn btn-danger" onclick="open_edit_modal({{each.id}})">Edit</button></td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block directly_in_main %}
+<div id="add_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:600px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('add_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Add new Schedule</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="add_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+                    <label><b>Select Source Terminal of Journey</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="source" id="source"  required>
+                        {% for each in terminal_details %}
+                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Select Destination Terminal of Journey</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="destination" id="destination" required>
+                        {% for each in terminal_details %}
+                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Distance between source and destination (in km)</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter distance" name="distance" id="distance" required>
+                    
+                    <input type="hidden" value="1" name="type">
+
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="add_button" type="submit">Add Schedule</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>Note</b> : For source and destination, visit the terminal section to view complete details of terminals.</p>
+        </footer>
+    
+    
+      </div>
+</div>
+
+
+<div id="edit_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:600px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('edit_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Edit Schedule</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message1" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="edit_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+
+                    <label><b>Select Source Terminal of Journey</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="source" id="source1"  disabled>
+                        {% for each in terminal_details %}
+                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Select Destination Terminal of Journey</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="destination" id="destination1" disabled>
+                        {% for each in terminal_details %}
+                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Distance between source and destination (in km)</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter distance" name="distance" id="distance1" required>
+                    
+                    <input type="hidden" value="2" name="type">
+                    <input type="hidden" name="pk_id" id="pk_id">
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="edit_button" type="submit">Save Detail</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>Note</b> : For source and destination, they are not editable, only their distance can be changed.</p>
+        </footer>
+    
+      </div>
+</div>
+
+
+<script type="text/javascript" src="{% static 'dashboard/js/manage_schedules.js' %}"></script>
+{% endblock %}

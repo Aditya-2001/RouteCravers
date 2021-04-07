@@ -1,0 +1,248 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+<link href="{% static 'dashboard/css/manage_bus_schedules.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block heading %}
+    Bus Schedule Details
+{% endblock %}
+
+{% block path %}
+    Dashboard / Bus / Schedule / Details
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Bus Schedule Details Table
+        <button onclick="document.getElementById('add_entry').style.display='block'" class="btn btn-sm btn-primary" style="float: right;">Add</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus Details</th>
+                        <th>Fare</th>
+                        <th>Reverse Route</th>
+                        <th>Bus Number</th>
+                        <th>Schedule ID</th>
+                        <th>Departure Day</th>
+                        <th>Departure Time</th>
+                        <th>Last Modified</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus Details</th>
+                        <th>Fare</th>
+                        <th>Reverse Route</th>
+                        <th>Bus Number</th>
+                        <th>Schedule ID</th>
+                        <th>Departure Day</th>
+                        <th>Departure Time</th>
+                        <th>Last Modified</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr id={{each.id}}>
+                            <td>{{each.id}}</td>
+                            <td>{{each.bus.name}} , {{each.bus.RTO_number}}</td>
+                            <td>{{each.fare}}</td>
+                            <td>{% if each.reverse_route %}Yes{% else %}No{% endif %}</td>
+                            <td>{{each.bus_number}}</td>
+                            <td>{{each.schedule.id}}</td>
+                            <td>
+                                {% ifequal each.departure_day 1 %}Monday{% endifequal %}
+                                {% ifequal each.departure_day 2 %}Tuesday{% endifequal %}
+                                {% ifequal each.departure_day 3 %}Wednesday{% endifequal %}
+                                {% ifequal each.departure_day 4 %}Thursday{% endifequal %}
+                                {% ifequal each.departure_day 5 %}Friday{% endifequal %}
+                                {% ifequal each.departure_day 6 %}Saturday{% endifequal %}
+                                {% ifequal each.departure_day 7 %}Sunday{% endifequal %}
+                            </td>
+                            <td>{{each.departure_time}}</td>
+                            <td>{{each.last_edit}}</td>
+                            <td><button class="btn btn-danger" onclick="open_edit_modal({{each.id}})">Edit</button></td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block directly_in_main %}
+<div id="add_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:700px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('add_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Add new Bus Schedule</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="add_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+
+                    <label><b>Select Bus Schedule</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="schedule" id="schedule"  required>
+                        {% for each in schedule %}
+                            <option value={{each.id}}>{{each.source}} -> {{each.destination}} , {{each.distance}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <div class="half-left">
+                        <label><b>Select Bus</b></label>
+                        <select class="w3-input w3-border w3-margin-bottom" name="bus" id="bus"  required>
+                            {% for each in bus_details %}
+                                <option value={{each.id}}>{{each.name}} , {{each.RTO_number}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="half-right">
+                        <label><b>Select Bus (R)</b></label>
+                        <select class="w3-input w3-border w3-margin-bottom" name="busR" id="busR"  required>
+                            {% for each in bus_details %}
+                                <option value={{each.id}}>{{each.name}} , {{each.RTO_number}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="half-left">
+                        <label><b>Departure Day</b></label>
+                        <select class="w3-input w3-border w3-margin-bottom" name="departure_day" id="departure_day" required>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wedday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="7">Friday</option>
+                        </select>
+                    </div>
+
+                    <div class="half-right">
+                        <label><b>Departure Day (R)</b></label>
+                        <select class="w3-input w3-border w3-margin-bottom" name="departure_dayR" id="departure_dayR" required>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wedday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="7">Friday</option>
+                        </select>
+                    </div>
+
+                    <div class="half-left">
+                        <label><b>Departure Time</b></label>
+                        <input class="w3-input w3-border w3-margin-bottom" type="time" placeholder="Enter departure time" name="departure_time" id="departure_time" required>
+                    </div>
+
+                    <div class="half-right">
+                        <label><b>Departure Time (R)</b></label>
+                        <input class="w3-input w3-border w3-margin-bottom" type="time" placeholder="Enter departure time" name="departure_timeR" id="departure_timeR" required>
+                    </div>
+
+                    <label><b>Fare per single seat</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter fare" name="fare" id="fare" required>
+
+                    <input type="hidden" value="1" name="type">
+
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="add_button" type="submit">Add Bus Schedule</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>(R)</b> : Details for the reverse route.</p>
+            <p><b>Note</b> : A bus number would be automatically alloted when you submit this form.</p>
+        </footer>
+    
+    
+      </div>
+</div>
+
+
+<div id="edit_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:600px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('edit_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Edit Bus Schedule</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message1" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="edit_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+
+                    <label><b>Select Bus Schedule</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="schedule" id="schedule1"  disabled>
+                        {% for each in schedule %}
+                            <option value={{each.id}}>{{each.source}} -> {{each.destination}} , {{each.distance}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Select Bus</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="bus" id="bus1"  disabled>
+                        {% for each in bus_details %}
+                            <option value={{each.id}}>{{each.name}} , {{each.RTO_number}}</option>
+                        {% endfor %}
+                    </select>
+                        
+                    <label><b>Departure Day</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="departure_day" id="departure_day1" required>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wedday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                        <option value="7">Friday</option>
+                    </select>
+
+                        
+                    
+                    <label><b>Departure Time</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="time" placeholder="Enter departure time" name="departure_time" id="departure_time1" required>
+       
+
+                    <label><b>Fare per single seat</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter fare" name="fare" id="fare1" required>
+
+                    <input type="hidden" value="2" name="type">
+                    <input type="hidden" name="pk_id" id="pk_id">
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="edit_button" type="submit">Save Detail</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>Note</b> : For source and destination, they are not editable, only their distance can be changed.</p>
+        </footer>
+    
+      </div>
+</div>
+
+
+<script type="text/javascript" src="{% static 'dashboard/js/manage_bus_schedules.js' %}"></script>
+{% endblock %}
