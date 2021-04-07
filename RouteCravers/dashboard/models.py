@@ -12,6 +12,10 @@ class BusDetail(models.Model):
     #1-sleeper -> Price reduced to 3/4
     #2-A.C. -> Price reduced to 1/1
     
+    accomodation_name=models.CharField(max_length=100, null=True)
+    
+    multiplier=models.FloatField(default=0.1, null=True)
+    
     refund_percentage=models.FloatField(default=95.0, null=True)
     
     no_refund_time=models.IntegerField(default=60)
