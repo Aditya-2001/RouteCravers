@@ -1,0 +1,176 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    Bus Details
+{% endblock %}
+
+{% block path %}
+    Dashboard / Bus / Details
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Bus Details Table
+        <button onclick="document.getElementById('add_entry').style.display='block'" class="btn btn-sm btn-primary" style="float: right;">Add</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Bus ID</th>
+                        <th>Bus Name</th>
+                        <th>RTO Number</th>
+                        <th>Details ID</th>
+                        <th>Total Seats</th>
+                        <th>Active</th>
+                        <th>Last Modified</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Bus ID</th>
+                        <th>Bus Name</th>
+                        <th>RTO Number</th>
+                        <th>Details ID</th>
+                        <th>Total Seats</th>
+                        <th>Active</th>
+                        <th>Last Modified</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr id={{each.id}}>
+                            <td>{{each.id}}</td>
+                            <td>{{each.name}}</td>
+                            <td>{{each.RTO_number}}</td>
+                            <td>{{each.details.accomodation_name}} , {{each.details.accomodation_code}}</td>
+                            <td>{{each.seats}}</td>
+                            <td>{% if each.active %}Yes{% else %}No{% endif %}</td>
+                            <td>{{each.last_edit}}</td>
+                            <td><button class="btn btn-danger" onclick="open_edit_modal({{each.id}})">Edit</button></td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block directly_in_main %}
+<div id="add_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:600px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('add_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Add new Bus</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="add_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+                    <label><b>Bus Name</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="text" name="name" id="name" placeholder="Enter bus name" required>
+                    
+                    <label><b>Bus RTO Alloted Number</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RTO number" name="RTO_number" id="RTO_number" required>
+                    
+                    <label><b>Choose a bus details matching to bus feature</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="details" id="details" required>
+                        {% for each in bus_details %}
+                            <option value={{each.id}}>{{each.accomodation_name}} , {{each.accomodation_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Total Seats</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" max="200" placeholder="Enter total seats percentage" name="seats" id="seats" required>
+                    
+                    <label><b>Currently Available</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="active" id="active" required>
+                        <option value="1">Yes</option>
+                        <option value="2">No</option>
+                    </select>
+
+                    <input type="hidden" value="1" name="type">
+
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="add_button" type="submit">Add Detail</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>Bus RTO Alloted Number</b> : Is is the number alloted by RTO at the time of purchase, through which a bus could be uniquely identified.</p>
+            <p><b>Bus Details</b> : To view complete list of bus details please visit Bus Details Section.</p>
+        </footer>
+    
+    
+      </div>
+</div>
+
+
+<div id="edit_entry" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-opacity" style="max-width:600px">
+        <header class="w3-container w3-green">
+          <span onclick="document.getElementById('edit_entry').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h2>Edit Bus</h2>
+        </header>
+    
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p id="message1" style="color: rgb(255, 182, 24)"></p>
+            </div> 
+            <form class="w3-container" id="edit_form" enctype="multipart/form">
+                {% csrf_token %}
+                <div class="w3-section">
+                    <label><b>Bus Name</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="text" name="name" id="name1" placeholder="Enter bus name" required>
+                    
+                    <label><b>Bus RTO Alloted Number</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RTO number" name="RTO_number" id="RTO_number1" required>
+                    
+                    <label><b>Choose a bus details matching to bus feature</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="details" id="details1" required>
+                        {% for each in bus_details %}
+                            <option value={{each.id}}>{{each.accomodation_name}} , {{each.accomodation_code}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label><b>Total Seats</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" max="200" placeholder="Enter total seats percentage" name="seats" id="seats1" required>
+                    
+                    <label><b>Currently Available</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="active" id="active1" required>
+                        <option value="1">Yes</option>
+                        <option value="2">No</option>
+                    </select>
+
+                    <input type="hidden" value="2" name="type">
+                    <input type="hidden" name="pk_id" id="pk_id">
+
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" id="edit_button" type="submit">Save Detail</button>
+                </div>
+              </form>
+        </div>
+
+        <footer class="w3-container">
+            <p><b>Bus RTO Alloted Number</b> : Is is the number alloted by RTO at the time of purchase, through which a bus could be uniquely identified.</p>
+            <p><b>Bus Details</b> : To view complete list of bus details please visit Bus Details Section.</p>
+        </footer>
+    
+    
+      </div>
+</div>
+
+
+<script type="text/javascript" src="{% static 'dashboard/js/manage_buses.js' %}"></script>
+{% endblock %}

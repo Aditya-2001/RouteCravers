@@ -123,7 +123,7 @@ def terminal_details(request):
                 try:
                     details=Terminal.objects.get(id=pk)
                 except:
-                    return JsonResponse({"error": "Terminal Details with the given accomodation donot exists"}, status=400)
+                    return JsonResponse({"error": "Terminal Details with the given details donot exists"}, status=400)
                 details.name=name
                 details.city=city
                 details.state=state
@@ -150,3 +150,70 @@ def get_terminal_details(request):
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
     return redirect('terminal_details')
+
+def manage_buses(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "POST" and request.is_ajax:
+            try:
+                name=request.POST.get('name')
+                RTO_number=request.POST.get('RTO_number')
+                seats=int(request.POST.get('seats'))
+                active=request.POST.get('active')
+                details=int(request.POST.get('details'))
+                type_=request.POST.get('type')
+                if int(active)==1:
+                    active=True
+                else:
+                    active=False
+                details=BusDetail.objects.get(id=details)
+                bus_details=details
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if int(type_)== 1:
+                try:
+                    Bus.objects.get(RTO_number=RTO_number)
+                    return JsonResponse({"error": "Bus already exists with given RTO number."}, status=400)
+                except:
+                    pass
+                Bus.objects.create(name=name,
+                                     RTO_number=RTO_number,
+                                     seats=seats,
+                                     active=active,
+                                     details=details)
+                return JsonResponse({"success": ""}, status=200)
+            elif int(type_) == 2:
+                pk=int(request.POST.get('pk_id'))
+                try:
+                    details=Bus.objects.get(id=pk)
+                except:
+                    return JsonResponse({"error": "Bus Details with the given details donot exists"}, status=400)
+                details.name=name
+                details.RTO_number=RTO_number
+                details.seats=seats
+                details.active=active
+                details.details=bus_details
+                details.save()
+                return JsonResponse({"success": ""}, status=200)
+            else:
+                return JsonResponse({"error": "Internal Error"}, status=400)
+            
+        else:
+            data=Bus.objects.all()
+            bus_details=BusDetail.objects.all()
+            return render(request,"dashboard/manage_buses.html",context={"data": data, "bus_details": bus_details})
+        
+    else:
+        return redirect('home')
+    
+def get_manage_buses(request):
+    if request.method == "GET" and request.is_ajax:
+        id=request.GET.get('id')
+        try:
+            data=Bus.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            return JsonResponse({"data": serialized_data}, status=200)
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('manage_buses')
