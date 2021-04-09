@@ -477,31 +477,16 @@ def new_booking(request):
             return redirect('dashboard')
         if request.method == "POST" and request.is_ajax:
             try:
-                type_=request.POST.get('type')
-                if int(type_)==1:
-                    schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
-                    terminal=Terminal.objects.get(id=int(request.POST.get('terminal')))
-                distance_from_source=float(request.POST.get('distance_from_source'))                    
+                source=request.POST.get('source')
+                destination=request.POST.get('destination')                
             except:
                 return JsonResponse({"error": "Invalid Details Entered"}, status=400)
-            if int(type_)== 1:
-                try:
-                    Stop.objects.get(schedule=schedule, terminal=terminal)
-                    return JsonResponse({"error": "Hey!, at this schedule the terminal is already added."}, status=400)
-                except:
-                    pass
-                Stop.objects.create(schedule=schedule, terminal=terminal, distance_from_source=distance_from_source)
-                return JsonResponse({"success": ""}, status=200)
-            elif int(type_) == 2:
-                pk=int(request.POST.get('pk_id'))
-                try:
-                    details=Stop.objects.get(id=pk)
-                except:
-                    return JsonResponse({"error": "Stop with the given details donot exists"}, status=400)
-                details.distance_from_source=distance_from_source
-                details.save()
-                return JsonResponse({"success": ""}, status=200)
-            else:
+            
+            try:
+                results=get_results(source,destination)
+                serialized_data=serializers.serialize('json', results)
+                return JsonResponse({"data": serialized_data}, status=200)
+            except:
                 return JsonResponse({"error": "Internal Error"}, status=400)
         else:
             terminal_details=Terminal.objects.all()
@@ -517,3 +502,30 @@ def terminals(request):
         return render(request,"dashboard/terminals.html",context={"terminal_details": terminal_details})
     else:
         return redirect('home')
+    
+def get_results(source,destination):
+    results=Schedule.objects.filter(source__name__icontains=source,destination__name__icontains=destination)
+    results=Schedule.objects.filter(source__city__icontains=source,destination__city__icontains=destination) | results
+    results=Schedule.objects.filter(source__state__icontains=source,destination__state__icontains=destination) | results
+    results=Schedule.objects.filter(source__terminal_code__icontains=source,destination__terminal_code__icontains=destination) | results
+    all_schedules=Schedule.objects.all()
+    for each in all_schedules:
+        all_stops=Stop.objects.filter(schedule=each)
+        answer=False
+        for every in all_stops:
+            if every.terminal.name==source or every.terminal.city==source or every.terminal.state==source or every.terminal.terminal_code==source:
+                answer=True
+                break
+        if answer==False:
+            continue 
+         
+        answer=False
+        for every in all_stops:
+            if every.terminal.name==destination or every.terminal.city==destination or every.terminal.state==destination or every.terminal.terminal_code==destination:
+                answer=True
+                break
+        if answer==False:
+            continue  
+        results=results | each
+        
+    return results

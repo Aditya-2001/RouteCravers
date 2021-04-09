@@ -19,7 +19,7 @@
                             <div class="card-header"><h3 class="text-center font-weight-light my-4">New Booking</h3></div>
                             <div class="card-body">
                                 <div style="text-align: center; color: red" id="error"></div>
-                                <form enctype="multipart/form-data" id="login_form">
+                                <form enctype="multipart/form-data" id="routes">
                                     {% csrf_token %}
                                     <div class="form-group">
                                         <label class="small mb-1" for="source">Source</label>
@@ -30,7 +30,7 @@
                                         <input class="form-control py-4" id="destination" name="destination" type="text" placeholder="Enter destination city / state / terminal name / terminal code" required/>
                                     </div>
                                     <div>
-                                        <button id="login_button" type="submit" class="btn btn-primary form-control">Find all available routes</button>
+                                        <button id="find_routes" type="submit" class="btn btn-primary form-control">Find all available routes</button>
                                     </div>
                                 </form>
                             </div>
@@ -39,6 +39,11 @@
                 </div>
             </div>
         </main>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+      This is some text within a card body.
     </div>
 </div>
 {% endblock %}
@@ -140,5 +145,5 @@
 </div>
 
 
-<script type="text/javascript" src="{% static 'dashboard/js/manage_schedules.js' %}"></script>
+<script type="text/javascript" src="{% static 'dashboard/js/new_booking.js' %}"></script>
 {% endblock %}
