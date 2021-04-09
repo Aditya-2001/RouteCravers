@@ -1,0 +1,59 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    Date-Wise Bus Schedule
+{% endblock %}
+
+{% block path %}
+    Dashboard / Bus / Schedule / Date-Wise
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Date-Wise Bus Schedule Table
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus Schedule ID</th>
+                        <th>Bus Number</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Departure Date</th>
+                        <th>Total Seats Booked</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus Schedule ID</th>
+                        <th>Bus Number</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Departure Date</th>
+                        <th>Total Seats Booked</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr>
+                            <td>{{each.id}}</td>
+                            <td>{{each.schedule.id}}</td>
+                            <td>{{each.schedule.bus_number}}</td>
+                            <td>{{each.schedule.schedule.source}}</td>
+                            <td>{{each.schedule.schedule.destination}}</td>
+                            <td>{{each.departure_date}}</td>
+                            <td>{{each.seats_booked}}</td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -83,15 +83,19 @@ class BusSchedule(models.Model):
 
 class DateWiseBusSchedule(models.Model):
     schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
-    departure_date=models.DateTimeField(default=datetime.datetime.now())
-    seats_opted=ListTextField(base_field=models.IntegerField(default=0), size=100000, default=[])
+    departure_date=models.DateField(default=datetime.datetime.now().date())
+    seats_opted=ListTextField(base_field=models.IntegerField(default=0), size=100000, default=[0,0])
+    seats_booked=models.IntegerField(default=0)
     
 class Stop(models.Model):
-    schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
+    schedule=models.ForeignKey(Schedule, on_delete=models.SET_NULL, null=True, blank=True)
     terminal=models.ForeignKey(Terminal, on_delete=models.SET_NULL, null=True, blank=True)
     
     distance_from_source=models.FloatField(default=0.0)
     #in Km
+    
+    def __str__(self):
+        return str(self.id)
     
 class UserTicket(models.Model):
     source_stop=models.ForeignKey(Stop, on_delete=models.SET_NULL, null=True, blank=True, related_name="source_stop")

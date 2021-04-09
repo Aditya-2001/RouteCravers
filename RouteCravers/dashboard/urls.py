@@ -13,6 +13,8 @@ urlpatterns = [
     path('manage/schedule/details/get/',views.get_manage_schedules,name="get_manage_schedules"),
     path('manage/bus/schedule/details/',views.manage_bus_schedules,name="manage_bus_schedules"),
     path('manage/bus/schedule/details/get/',views.get_manage_bus_schedules,name="get_manage_bus_schedules"),
+    path('manage/bus/schedule/details/datewise/',views.manage_date_wise_bus_schedules,name="manage_date_wise_bus_schedules"),
+    path('manage/stops/details/',views.manage_stops,name="manage_stops"),
     
     
     
