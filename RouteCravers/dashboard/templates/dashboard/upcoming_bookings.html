@@ -1,0 +1,88 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    Upcoming Bookings
+{% endblock %}
+
+{% block path %}
+    Dashboard / Bookings / Upcoming
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Booking Table
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Source Stop</th>
+                        <th>Destination Stop</th>
+                        <th>Departure Date</th>
+                        <th>Departure Time</th>
+                        <th>Bus</th>
+                        <th>Seats Booked</th>
+                        <th>Fare</th>
+                        <th>Booking Status</th>
+                        <th>Booking Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Source Stop</th>
+                        <th>Destination Stop</th>
+                        <th>Departure Date</th>
+                        <th>Departure Time</th>
+                        <th>Bus</th>
+                        <th>Seats Booked</th>
+                        <th>Fare</th>
+                        <th>Booking Status</th>
+                        <th>Booking Time</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr>
+                            <td>{{each.id}}</td>
+                            <td>{{each.source_stop.terminal.name}}({{each.source_stop.terminal.terminal_code}})</td>
+                            <td>{{each.destination_stop.terminal.name}}({{each.destination_stop.terminal.terminal_code}})</td>
+                            <td>{{each.date_wise_schedule.departure_date}}</td>
+                            <td>{{each.date_wise_schedule.schedule.departure_time}}</td>
+                            <td>{{each.date_wise_schedule.schedule.bus.name}}({{each.date_wise_schedule.schedule.bus_number}})</td>
+                            <td>{{each.seats_booked}}</td>
+                            <td>{{each.fare}}</td>
+                            <td>
+                                {% ifequal each.booking_status 1 %}
+                                    Booked
+                                {% endifequal %}
+                                {% ifequal each.booking_status 2 %}
+                                    Cancelled
+                                {% endifequal %}
+                                {% ifequal each.booking_status 3 %}
+                                    Refunded
+                                {% endifequal %}
+                                {% ifequal each.booking_status 4 %}
+                                    Completed
+                                {% endifequal %}
+                            </td>
+                            <td>{{each.date_of_booking}}</td>
+                            <td><button class="btn btn-danger" onclick="open_edit_modal({{each.id}})">Cancel</button></td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block directly_in_main %}
+    <script type="text/javascript" src="{% static 'dashboard/js/upcoming_bookings.js' %}"></script>
+{% endblock %}

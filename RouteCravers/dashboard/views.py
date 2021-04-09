@@ -464,6 +464,10 @@ def my_bookings(request,item):
             if int(item)==2:
                 data=UserTicket.objects.filter(user=request.user, date_of_booking__lt=datetime.datetime.now().date())
                 return render(request,"dashboard/past_bookings.html",context={"data": data})
+            if int(item)==1:
+                data=UserTicket.objects.filter(user=request.user, date_of_booking__gte=datetime.datetime.now().date())
+                return render(request,"dashboard/upcoming_bookings.html",context={"data": data})
+            return redirect('home')
         
     else:
         return redirect('home')
