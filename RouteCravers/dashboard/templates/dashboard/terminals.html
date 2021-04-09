@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    Terminal Details
+{% endblock %}
+
+{% block path %}
+    Dashboard / View / Terminals
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Refer to this terminal table for selecting source and destination of your journey
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <tr>
+                            <th>Terminal Name</th>
+                            <th>Terminal City</th>
+                            <th>Terminal State</th>
+                            <th>Terminal Code</th>
+                        </tr>
+                    </tr>
+                    <tfoot>
+                        <tr>
+                            <th>Terminal Name</th>
+                            <th>Terminal City</th>
+                            <th>Terminal State</th>
+                            <th>Terminal Code</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                            {% for each in terminal_details %}
+                            <tr>
+                                <td>{{each.name}}</td>
+                                <td>{{each.city}}</td>
+                                <td>{{each.state}}</td>
+                                <td>{{each.terminal_code}}</td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

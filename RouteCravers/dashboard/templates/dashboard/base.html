@@ -96,6 +96,10 @@
                             </div>
                             {% if request.user.is_staff %}{% else %}
                             <div class="sb-sidenav-menu-heading">BOOKING</div>
+                                <a class="nav-link" href="{% url 'new_booking' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    New Booking
+                                </a>    
                                 <a class="nav-link" href="{% url 'my_bookings' item='2' %}">
                                     <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                     Past Bookings
@@ -105,7 +109,11 @@
                                     Upcoming Bookings
                                 </a>
 
-
+                            <div class="sb-sidenav-menu-heading">Extras</div>
+                                <a class="nav-link" href="{% url 'terminals' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Terminals
+                                </a>
 
                             {% endif %}
 

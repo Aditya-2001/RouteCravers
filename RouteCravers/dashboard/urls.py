@@ -18,7 +18,8 @@ urlpatterns = [
     path('manage/stops/details/get/',views.get_manage_stops,name="get_manage_stops"),
     path('manage/user/tickets/',views.user_tickets,name="user_tickets"),
     path('bookings/all/<str:item>',views.my_bookings,name="my_bookings"),
-    
+    path('bookings/new/',views.new_booking,name="new_booking"),
+    path('addons/view/terminal/details/',views.terminals,name="terminals")
     
     
     
