@@ -25,7 +25,7 @@ $("#add_form").submit(function (e) {
             markup=`<tr>
                     <td>-</td>
                     <td>`+bus.options[bus.selectedIndex].text+`</td>
-                    <td>`+document.getElementById("fare").value+`</td>
+                    <td>Not loaded</td>
                     <td>No</td>
                     <td>-</td>
                     <td>`+document.getElementById("schedule").value+`</td>
@@ -40,7 +40,7 @@ $("#add_form").submit(function (e) {
             markup=`<tr>
                     <td>-</td>
                     <td>`+bus.options[bus.selectedIndex].text+`</td>
-                    <td>`+document.getElementById("fare").value+`</td>
+                    <td>Not loaded</td>
                     <td>Yes</td>
                     <td>-</td>
                     <td>`+document.getElementById("schedule").value+`</td>
@@ -75,7 +75,6 @@ function open_edit_modal(id){
             document.getElementById("bus1").value = data.fields.bus
             document.getElementById("departure_day1").value = data.fields.departure_day
             document.getElementById("departure_time1").value = data.fields.departure_time
-            document.getElementById("fare1").value = data.fields.fare
             document.getElementById("pk_id").value = id
         },
         error: function (response) {
@@ -109,7 +108,7 @@ $("#edit_form").submit(function (e) {
             markup=`<tr>
                     <td>-</td>
                     <td>`+bus.options[bus.selectedIndex].text+`</td>
-                    <td>`+document.getElementById("fare1").value+`</td>
+                    <td>Not loaded</td>
                     <td>No</td>
                     <td>-</td>
                     <td>`+document.getElementById("schedule1").value+`</td>

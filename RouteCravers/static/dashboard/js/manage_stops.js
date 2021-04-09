@@ -41,9 +41,9 @@ function open_edit_modal(id){
             data=response.data
             // alert(data)
             data=JSON.parse(data)[0]
-            document.getElementById("source1").value = data.fields.source
-            document.getElementById("destination1").value = data.fields.destination
-            document.getElementById("distance1").value = data.fields.distance
+            document.getElementById("schedule1").value = data.fields.schedule
+            document.getElementById("terminal1").value = data.fields.terminal
+            document.getElementById("distance_from_source1").value = data.fields.distance_from_source
             document.getElementById("pk_id").value = id
         },
         error: function (response) {
@@ -72,13 +72,11 @@ $("#edit_form").submit(function (e) {
             node=document.getElementById(document.getElementById("pk_id").value)
             node.remove()
             tableBody = $("table tbody")
-            source=document.getElementById("source1")
-            destination=document.getElementById("destination1")
             markup=`<tr>
                     <td>`+document.getElementById("pk_id").value+`</td>
-                    <td>`+source.options[source.selectedIndex].text+`</td>
-                    <td>`+destination.options[destination.selectedIndex].text+`</td>
-                    <td>`+document.getElementById("distance1").value+`</td>
+                    <td>`+document.getElementById("schedule1").value+`</td>
+                    <td>`+document.getElementById("terminal1").value+`</td>
+                    <td>`+document.getElementById("distance_from_source1").value+`</td>
                     <td>-</td>
                 </tr>    `
             tableBody.append(markup);

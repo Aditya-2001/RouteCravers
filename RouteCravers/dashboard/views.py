@@ -289,7 +289,6 @@ def manage_bus_schedules(request):
                 type_=request.POST.get('type')
                 departure_day=int(request.POST.get('departure_day'))
                 departure_time=request.POST.get('departure_time')
-                fare=float(request.POST.get('fare'))
                 if int(type_)==1:
                     schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
                     bus=Bus.objects.get(id=int(request.POST.get('bus')))
@@ -302,19 +301,21 @@ def manage_bus_schedules(request):
             if int(type_)== 1:
                 x=BusSchedule.objects.create(schedule=schedule, 
                                         bus=bus, 
-                                        fare=fare,
                                         reverse_route=False,
                                         departure_day=departure_day,
                                         departure_time=departure_time)
                 x1=BusSchedule.objects.create(schedule=schedule, 
                                         bus=busR, 
-                                        fare=fare,
                                         reverse_route=True,
                                         departure_day=departure_dayR,
                                         departure_time=departure_timeR)
+                fare=float(schedule.distance)*float(bus.details.multiplier)*settings.FARE_PER_KM
+                fareR=float(schedule.distance)*float(busR.details.multiplier)*settings.FARE_PER_KM
                 x.bus_number=x.id
+                x.fare=fare
                 x.save()
                 x1.bus_number=x1.id
+                x1.fare=fareR
                 x1.save()
                 return JsonResponse({"success": ""}, status=200)
             elif int(type_) == 2:
@@ -325,7 +326,6 @@ def manage_bus_schedules(request):
                     return JsonResponse({"error": "Bus Schedule with the given details donot exists"}, status=400)
                 details.departure_time=departure_time
                 details.departure_day=departure_day
-                details.fare=fare
                 details.save()
                 return JsonResponse({"success": ""}, status=200)
             else:
@@ -369,8 +369,9 @@ def manage_stops(request):
         if request.method == "POST" and request.is_ajax:
             try:
                 type_=request.POST.get('type')
-                schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
-                terminal=Terminal.objects.get(id=int(request.POST.get('terminal')))
+                if int(type_)==1:
+                    schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
+                    terminal=Terminal.objects.get(id=int(request.POST.get('terminal')))
                 distance_from_source=float(request.POST.get('distance_from_source'))                    
             except:
                 return JsonResponse({"error": "Invalid Details Entered"}, status=400)
@@ -403,3 +404,15 @@ def manage_stops(request):
     else:
         return redirect('home')
     
+def get_manage_stops(request):
+    if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        id=request.GET.get('id')
+        try:
+            data=Stop.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            return JsonResponse({"data": serialized_data}, status=200)
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('manage_schedules')

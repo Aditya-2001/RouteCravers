@@ -119,23 +119,22 @@
             <form class="w3-container" id="edit_form" enctype="multipart/form">
                 {% csrf_token %}
                 <div class="w3-section">
-
-                    <label><b>Select Source Terminal of Journey</b></label>
-                    <select class="w3-input w3-border w3-margin-bottom" name="source" id="source1"  disabled>
-                        {% for each in terminal_details %}
-                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                    <label><b>Select Schedule</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="schedule" id="schedule1"  disabled>
+                        {% for each in schedule %}
+                            <option value={{each.id}}>{{each.source}}->{{each.destination}} , ID={{each.id}}</option>
                         {% endfor %}
                     </select>
                     
-                    <label><b>Select Destination Terminal of Journey</b></label>
-                    <select class="w3-input w3-border w3-margin-bottom" name="destination" id="destination1" disabled>
+                    <label><b>Select Terminal</b></label>
+                    <select class="w3-input w3-border w3-margin-bottom" name="terminal" id="terminal1" disabled>
                         {% for each in terminal_details %}
-                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}}</option>
+                            <option value={{each.id}}>{{each.name}} , {{each.terminal_code}} , ID={{each.id}}</option>
                         {% endfor %}
                     </select>
                     
-                    <label><b>Distance between source and destination (in km)</b></label>
-                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter distance" name="distance" id="distance1" required>
+                    <label><b>Distance of Stop from Source (in km)</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.001"  placeholder="Enter distance" name="distance_from_source" id="distance_from_source1" required>
                     
                     <input type="hidden" value="2" name="type">
                     <input type="hidden" name="pk_id" id="pk_id">
@@ -145,7 +144,10 @@
         </div>
 
         <footer class="w3-container">
-            <p><b>Note</b> : For source and destination, they are not editable, only their distance can be changed.</p>
+            <p><b>Schedule</b> : This would the schedule where the stop will be added. It would be one of the point where bus needs to stop for passengers to get into bus or get out the bus.</p>
+            <p><b>Terminal</b> : This would be stop details where bus needs to stop.</p>
+            <p><b>Distance</b> : This would be the distance of this stop from the source terminal in km.</p>
+            <p><b>Note</b> : Only distance from the source is editable.</p>
         </footer>
     
       </div>
