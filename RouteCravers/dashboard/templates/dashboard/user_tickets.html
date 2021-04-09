@@ -1,0 +1,75 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block heading %}
+    User Tickets
+{% endblock %}
+
+{% block path %}
+    Dashboard / User / Tickets
+{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Ticket Table
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Source Stop ID</th>
+                        <th>Destination Stop ID</th>
+                        <th>User Name</th>
+                        <th>User Email</th>
+                        <th>Departure Date</th>
+                        <th>Schedule ID</th>
+                        <th>Seats Booked</th>
+                        <th>Booking Status</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Source Stop ID</th>
+                        <th>Destination Stop ID</th>
+                        <th>User Name</th>
+                        <th>User Email</th>
+                        <th>Departure Date</th>
+                        <th>Schedule ID</th>
+                        <th>Seats Booked</th>
+                        <th>Booking Status</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                        {% for each in data %}
+                        <tr>
+                            <td>{{each.id}}</td>
+                            <td>{{each.source_stop.id}}</td>
+                            <td>{{each.destination_stop.id}}</td>
+                            <td>{{each.user.first_name}} {{each.user.last_name}}</td>
+                            <td>{{each.user.email}}</td>
+                            <td>{{each.date_wise_schedule.departure_date}}</td>
+                            <td>{{each.date_wise_schedule.schedule.id}}</td>
+                            <td>{{each.seats_booked}}</td>
+                            <td>
+                                {% ifequal each.booking_status 1 %}
+                                    Booked
+                                {% endifequal %}
+                                {% ifequal each.booking_status 2 %}
+                                    Cancelled
+                                {% endifequal %}
+                                {% ifequal each.booking_status 3 %}
+                                    Refunded
+                                {% endifequal %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

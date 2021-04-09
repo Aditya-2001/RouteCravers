@@ -16,6 +16,8 @@ urlpatterns = [
     path('manage/bus/schedule/details/datewise/',views.manage_date_wise_bus_schedules,name="manage_date_wise_bus_schedules"),
     path('manage/stops/details/',views.manage_stops,name="manage_stops"),
     path('manage/stops/details/get/',views.get_manage_stops,name="get_manage_stops"),
+    path('manage/user/tickets/',views.user_tickets,name="user_tickets"),
+
     
     
     

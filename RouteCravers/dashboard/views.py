@@ -418,3 +418,12 @@ def get_manage_stops(request):
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
     return redirect('manage_schedules')
+
+def user_tickets(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        data=UserTicket.objects.filter(date_wise_schedule__departure_date__gte=datetime.datetime.now().date())
+        return render(request,"dashboard/user_tickets.html",context={"data": data})
+    else:
+        return redirect('home')
