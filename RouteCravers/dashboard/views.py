@@ -243,9 +243,11 @@ def manage_schedules(request):
                     return JsonResponse({"error": "Route already exists with given source and destination."}, status=400)
                 except:
                     pass
-                Schedule.objects.create(source=source, 
+                s=Schedule.objects.create(source=source, 
                                         destination=destination, 
                                         distance=distance)
+                Stop.objects.create(schedule=s, terminal=s.source, distance_from_source=0)
+                Stop.objects.create(schedule=s, terminal=s.destination, distance_from_source=s.distance)
                 return JsonResponse({"success": ""}, status=200)
             elif int(type_) == 2:
                 pk=int(request.POST.get('pk_id'))
