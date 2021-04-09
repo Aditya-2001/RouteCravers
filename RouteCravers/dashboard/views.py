@@ -484,6 +484,7 @@ def new_booking(request):
             
             try:
                 results=get_results(source,destination)
+                results=get_results(destination,source) | results
                 serialized_data=serializers.serialize('json', results)
                 return JsonResponse({"data": serialized_data}, status=200)
             except:
@@ -504,10 +505,10 @@ def terminals(request):
         return redirect('home')
     
 def get_results(source,destination):
-    results=Schedule.objects.filter(source__name__icontains=source,destination__name__icontains=destination)
-    results=Schedule.objects.filter(source__city__icontains=source,destination__city__icontains=destination) | results
-    results=Schedule.objects.filter(source__state__icontains=source,destination__state__icontains=destination) | results
-    results=Schedule.objects.filter(source__terminal_code__icontains=source,destination__terminal_code__icontains=destination) | results
+    results=Schedule.objects.filter(source__name=source,destination__name=destination)
+    results=Schedule.objects.filter(source__city=source,destination__city=destination) | results
+    results=Schedule.objects.filter(source__state=source,destination__state=destination) | results
+    results=Schedule.objects.filter(source__terminal_code=source,destination__terminal_code=destination) | results
     all_schedules=Schedule.objects.all()
     for each in all_schedules:
         all_stops=Stop.objects.filter(schedule=each)
@@ -518,7 +519,6 @@ def get_results(source,destination):
                 break
         if answer==False:
             continue 
-         
         answer=False
         for every in all_stops:
             if every.terminal.name==destination or every.terminal.city==destination or every.terminal.state==destination or every.terminal.terminal_code==destination:
@@ -526,6 +526,29 @@ def get_results(source,destination):
                 break
         if answer==False:
             continue  
-        results=results | each
+        results=results | Schedule.objects.filter(id=each.id)
         
     return results
+
+def get_new_booking(request):
+    if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == True:
+            return redirect('dashboard')
+        id=request.GET.get('id')
+        try:
+            data=Schedule.objects.get(id=int(id))
+            serialized_data=serializers.serialize('json', [data])
+            stops=Stop.objects.filter(schedule=data).order_by('distance_from_source')
+            serialized_data1=serializers.serialize('json', stops)
+            terminals=Terminal.objects.all()
+            serialized_data2=serializers.serialize('json',terminals)
+            bus_schedules=BusSchedule.objects.filter(schedule=data)
+            serialized_data3=serializers.serialize('json',bus_schedules)
+            return JsonResponse({"data": serialized_data, "stops": serialized_data1, "terminals": serialized_data2, "bus_schedules": serialized_data3}, status=200)
+
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+    return redirect('manage_schedules')
+
+def create_new_booking(request):
+    return JsonResponse({"success": ""}, status=200)

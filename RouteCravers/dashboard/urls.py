@@ -19,7 +19,9 @@ urlpatterns = [
     path('manage/user/tickets/',views.user_tickets,name="user_tickets"),
     path('bookings/all/<str:item>',views.my_bookings,name="my_bookings"),
     path('bookings/new/',views.new_booking,name="new_booking"),
-    path('addons/view/terminal/details/',views.terminals,name="terminals")
+    path('addons/view/terminal/details/',views.terminals,name="terminals"),
+    path('bookings/new/get/',views.get_new_booking,name="get_new_booking"),
+    path('bookings/new/create/',views.create_new_booking,name="create_new_booking"),
     
     
     
