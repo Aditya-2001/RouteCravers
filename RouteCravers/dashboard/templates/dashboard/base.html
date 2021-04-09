@@ -15,6 +15,7 @@
         {% block title %}{% endblock %}
     </head>
     <body class="sb-nav-fixed">
+        {% if request.user.is_authenticated %}
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <a class="navbar-brand" href="{% url 'home' %}">RouteCravers</a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
@@ -93,44 +94,52 @@
                                     </div>
                                 </nav>
                             </div>
-                            <div class="sb-sidenav-menu-heading">TABLES</div>
-                            <a class="nav-link" href="{% url 'bus_details' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Bus Details
-                            </a>
-                            <a class="nav-link" href="{% url 'terminal_details' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Terminal Details
-                            </a>
-                            <a class="nav-link" href="{% url 'manage_buses' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Manage Buses
-                            </a>
-                            <a class="nav-link" href="{% url 'manage_schedules' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Manage Schedules
-                            </a>
-                            <a class="nav-link" href="{% url 'manage_bus_schedules' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Manage Bus Schedules
-                            </a>
-                            <a class="nav-link" href="{% url 'manage_date_wise_bus_schedules' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Date-Wise Bus Schedules
-                            </a>
-                            <a class="nav-link" href="{% url 'manage_stops' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Manage Stops
-                            </a>
-                            <a class="nav-link" href="{% url 'user_tickets' %}">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                User Tickets
-                            </a>
-                            
-                            <a class="nav-link" href="sdfgh">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                BH5
-                            </a>
+                            {% if request.user.is_staff %}{% else %}
+                            <div class="sb-sidenav-menu-heading">BOOKING</div>
+                                <a class="nav-link" href="{% url 'my_bookings' item='2' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Past Bookings
+                                </a>
+                            {% endif %}
+
+
+
+                            {% if request.user.is_staff %}
+                                <div class="sb-sidenav-menu-heading">TABLES</div>
+                                <a class="nav-link" href="{% url 'bus_details' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Bus Details
+                                </a>
+                                <a class="nav-link" href="{% url 'terminal_details' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Terminal Details
+                                </a>
+                                <a class="nav-link" href="{% url 'manage_buses' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Manage Buses
+                                </a>
+                                <a class="nav-link" href="{% url 'manage_schedules' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Manage Schedules
+                                </a>
+                                <a class="nav-link" href="{% url 'manage_bus_schedules' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Manage Bus Schedules
+                                </a>
+                                <a class="nav-link" href="{% url 'manage_date_wise_bus_schedules' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Date-Wise Bus Schedules
+                                </a>
+                                <a class="nav-link" href="{% url 'manage_stops' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    Manage Stops
+                                </a>
+                                <a class="nav-link" href="{% url 'user_tickets' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    User Tickets
+                                </a>
+                            {% endif %}
+
                             <div class="sb-sidenav-menu-heading">Addons</div>
                             <a class="nav-link" href="wedrf">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
@@ -193,5 +202,6 @@
         <script src="{% static 'dashboard/dist/assets/demo/datatables-demo.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         
+        {% endif %}
     </body>
 </html>

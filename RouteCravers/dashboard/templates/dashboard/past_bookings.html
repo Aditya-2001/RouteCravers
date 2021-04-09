@@ -1,18 +1,18 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% block heading %}
-    User Tickets
+    Past Bookings
 {% endblock %}
 
 {% block path %}
-    Dashboard / User / Tickets
+    Dashboard / Bookings / Past
 {% endblock %}
 
 {% block body %}
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-table mr-1"></i>
-        Ticket Table
+        Booking Table
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -20,40 +20,42 @@
                 <thead>
                     <tr>
                         <th>Ticket ID</th>
-                        <th>Source Stop ID</th>
-                        <th>Destination Stop ID</th>
-                        <th>User Name</th>
-                        <th>User Email</th>
+                        <th>Source Stop</th>
+                        <th>Destination Stop</th>
                         <th>Departure Date</th>
-                        <th>Schedule ID</th>
+                        <th>Departure Time</th>
+                        <th>Bus</th>
                         <th>Seats Booked</th>
+                        <th>Fare</th>
                         <th>Booking Status</th>
+                        <th>Booking Time</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>Ticket ID</th>
-                        <th>Source Stop ID</th>
-                        <th>Destination Stop ID</th>
-                        <th>User Name</th>
-                        <th>User Email</th>
+                        <th>Source Stop</th>
+                        <th>Destination Stop</th>
                         <th>Departure Date</th>
-                        <th>Schedule ID</th>
+                        <th>Departure Time</th>
+                        <th>Bus</th>
                         <th>Seats Booked</th>
+                        <th>Fare</th>
                         <th>Booking Status</th>
+                        <th>Booking Time</th>
                     </tr>
                 </tfoot>
                 <tbody>
                         {% for each in data %}
                         <tr>
                             <td>{{each.id}}</td>
-                            <td>{{each.source_stop.id}}</td>
-                            <td>{{each.destination_stop.id}}</td>
-                            <td>{{each.user.first_name}} {{each.user.last_name}}</td>
-                            <td>{{each.user.email}}</td>
+                            <td>{{each.source_stop.terminal.name}}({{each.source_stop.terminal.terminal_code}})</td>
+                            <td>{{each.destination_stop.terminal.name}}({{each.destination_stop.terminal.terminal_code}})</td>
                             <td>{{each.date_wise_schedule.departure_date}}</td>
-                            <td>{{each.date_wise_schedule.schedule.id}}</td>
+                            <td>{{each.date_wise_schedule.schedule.departure_time}}</td>
+                            <td>{{each.date_wise_schedule.schedule.bus.name}}({{each.date_wise_schedule.schedule.bus_number}})</td>
                             <td>{{each.seats_booked}}</td>
+                            <td>{{each.fare}}</td>
                             <td>
                                 {% ifequal each.booking_status 1 %}
                                     Booked
@@ -68,6 +70,7 @@
                                     Completed
                                 {% endifequal %}
                             </td>
+                            <td>{{each.date_of_booking}}</td>
                         </tr>
                         {% endfor %}
                 </tbody>

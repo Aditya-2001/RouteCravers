@@ -427,3 +427,43 @@ def user_tickets(request):
         return render(request,"dashboard/user_tickets.html",context={"data": data})
     else:
         return redirect('home')
+    
+def my_bookings(request,item):
+    if request.user.is_authenticated:
+        if request.user.is_staff == True:
+            return redirect('dashboard')
+        if request.method == "POST" and request.is_ajax:
+            try:
+                type_=request.POST.get('type')
+                if int(type_)==1:
+                    schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
+                    terminal=Terminal.objects.get(id=int(request.POST.get('terminal')))
+                distance_from_source=float(request.POST.get('distance_from_source'))                    
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if int(type_)== 1:
+                try:
+                    Stop.objects.get(schedule=schedule, terminal=terminal)
+                    return JsonResponse({"error": "Hey!, at this schedule the terminal is already added."}, status=400)
+                except:
+                    pass
+                Stop.objects.create(schedule=schedule, terminal=terminal, distance_from_source=distance_from_source)
+                return JsonResponse({"success": ""}, status=200)
+            elif int(type_) == 2:
+                pk=int(request.POST.get('pk_id'))
+                try:
+                    details=Stop.objects.get(id=pk)
+                except:
+                    return JsonResponse({"error": "Stop with the given details donot exists"}, status=400)
+                details.distance_from_source=distance_from_source
+                details.save()
+                return JsonResponse({"success": ""}, status=200)
+            else:
+                return JsonResponse({"error": "Internal Error"}, status=400)
+        else:
+            if int(item)==2:
+                data=UserTicket.objects.filter(user=request.user, date_of_booking__lt=datetime.datetime.now().date())
+                return render(request,"dashboard/past_bookings.html",context={"data": data})
+        
+    else:
+        return redirect('home')

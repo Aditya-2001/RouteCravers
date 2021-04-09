@@ -108,8 +108,10 @@ class UserTicket(models.Model):
     #1-booked
     #2-cancelled
     #3-refunded
+    #4-Completed
     
     fare=models.FloatField(default=0.0)
+    date_of_booking=models.DateField(default=datetime.datetime.now())
     
     def __str__(self):
         return str(self.user)
