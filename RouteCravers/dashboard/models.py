@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 # from django.contrib.postgres.fields import ArrayField
+from django_mysql.models import ListTextField
 
 # Create your models here.
 class BusDetail(models.Model):
@@ -83,7 +84,7 @@ class BusSchedule(models.Model):
 class DateWiseBusSchedule(models.Model):
     schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
     departure_date=models.DateTimeField(default=datetime.datetime.now())
-    # seats_opted=ArrayField(models.IntegerField(default=0),size=100)
+    seats_opted=ListTextField(base_field=models.IntegerField(default=0), size=100000, default=[])
     
 class Stop(models.Model):
     schedule=models.ForeignKey(BusSchedule, on_delete=models.SET_NULL, null=True, blank=True)
