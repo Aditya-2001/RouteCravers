@@ -548,7 +548,96 @@ def get_new_booking(request):
 
         except:
             return JsonResponse({"error": "Details Not Found"}, status=400)
-    return redirect('manage_schedules')
+    return redirect('new_booking')
 
 def create_new_booking(request):
     return JsonResponse({"success": ""}, status=200)
+
+def new_booking_confirm(request):
+    if request.method == "POST" and request.is_ajax:
+        if request.user.is_staff == True:
+            return redirect('dashboard')
+        
+        try:
+            source_stop=Stop.objects.get(id=int(request.POST.get('source_stop')))
+            destination_stop=Stop.objectes.get(id=int(request.POST.get('destination_stop')))
+            bus=int(request.POST.get('bus'))
+            seats_booked=int(request.POST.get('seats_booked'))
+            fare=float(request.POST.get('fare'))
+            date_wise_schedule=int(request.POST.get('date_wise_schedule'))
+            departure_day=request.POST.get('departure_day')
+        except:
+            return JsonResponse({"error": "Invalid Detail Format Found"}, status=400)
+        
+        try:
+            schedule=BusSchedule.objects.get(id=date_wise_schedule)
+        except:
+            return JsonResponse({"error": "Scehdule Not Found"}, status=400)
+        
+        date_wise_schedule=get_date_wise_schedule(schedule,departure_day)
+        date_wise_schedule.save()
+        (seat_availability,date_wise_schedule)=is_seat_available(date_wise_schedule,source_stop.id,destination_stop.id,seats_booked,schedule.bus.seats,schedule.reverse_route)
+        if seat_availability==False:
+            return JsonResponse({"error": "Seats not available, wither try to reduce them or choose another bus"}, status=400)
+        date_wise_schedule.save()
+        
+        UserTicket.objects.create(source_stop=source_stop,
+                                  destination_stop=destination_stop,
+                                  user=request.user,
+                                  date_wise_schedule=date_wise_schedule,
+                                  seats_booked=seats_booked,
+                                  booking_status=1,
+                                  fare=fare)
+        
+        return JsonResponse({"success": ""}, status=200)
+    else:    
+        return redirect('new_booking')
+
+def get_date_wise_schedule(schedule,departure_day):
+    stops=Stop.objects.filter(schedule=schedule).order_by('distance_from_source')
+    try:
+        date_wise=DateWiseBusSchedule.objects.get(schedule=schedule,departure_day=departure_day)
+    except:
+        date_wise=DateWiseBusSchedule.objects.create(schedule=schedule,departure_day=departure_day)
+        date_wise.seats_opted=[0 for i in range(stops.count())]
+        my_list=[]
+        for each in stops:
+            my_list.append(each.id)
+        date_wise.stop_id=my_list
+        date_wise.save()
+        return date_wise
+    
+    if(len(date_wise.stop_id)==stops.count()):
+        return date_wise
+    index=0
+    for each in stops:
+        if(date_wise.stop_id[index]==each.id):
+            index+=1
+            continue
+        value=min(date_wise.seats_opted[index-1],date_wise.seats_opted[index])
+        date_wise.stop_id.insert(index,each.id)
+        date_wise.seats_opted.insert(index,min(value))
+        index+=1
+    date_wise.save()
+    return date_wise
+
+def is_seat_available(date_wise_schedule,s,d,seats_booked,total_seats,reverse_route):
+    if seats_booked>total_seats:
+        return False
+    if reverse_route==False:
+        start=(date_wise_schedule.stop_id).index(int(s))
+        end=(date_wise_schedule.stop_id).index(int(d))+1
+    else:
+        end=(date_wise_schedule.stop_id).index(int(s))+1
+        start=(date_wise_schedule.stop_id).index(int(d))
+    maximum=-1
+    for i in range(start,end):
+        maximum=max(maximum,date_wise_schedule.seats_opted[i])
+        
+    if maximum+seats_booked+1<=total_seats:
+        for i in range(start,end):
+            date_wise_schedule.seats_opted[i]+=seats_booked
+        date_wise_schedule.save()
+        return (True,date_wise_schedule)
+    else:
+        return (False,date_wise_schedule)

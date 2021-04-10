@@ -96,34 +96,35 @@
                 <div class="w3-section">
 
                     <label><b>Select Source Terminal</b></label>
-                    <select class="w3-input w3-border w3-margin-bottom" name="source_stop" id="source_stop"  required>
+                    <select class="w3-input w3-border w3-margin-bottom" name="source_stop" id="source_stop" onchange="cal_fare()"   required>
                             
                     </select>
 
                     <label><b>Select Destination Terminal</b></label>
-                    <select class="w3-input w3-border w3-margin-bottom" name="destination_stop" id="destination_stop"  required>
+                    <select class="w3-input w3-border w3-margin-bottom" name="destination_stop" id="destination_stop" onchange="cal_fare()"  required>
                             
                     </select>
 
                     <label><b>Select a Bus</b></label>
-                    <select class="w3-input w3-border w3-margin-bottom" name="bus" id="bus"  required>
+                    <select class="w3-input w3-border w3-margin-bottom" name="bus" id="bus" onchange="cal_fare()" required>
                             
                     </select>
 
                     <label><b>Seats you want to book</b></label>
-                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" max="100" placeholder="Enter number of seats" name="seats_booked" id="seats_booked" required>
+                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" max="100" placeholder="Enter number of seats" name="seats_booked" id="seats_booked"  onkeyup="cal_fare()" required>
 
                     <label><b>Total Fare</b></label>
-                    <input class="w3-input w3-border w3-margin-bottom" type="number" min="0" step="0.000001" placeholder="Fare" name="fare" id="fare" readonly>
+                    <input class="w3-input w3-border w3-margin-bottom" type="text" min="0" step="0.000001" placeholder="Fare" name="fare" id="fare" readonly>
 
                     <input type="hidden" id="date_wise_schedule">
 
                     <label><b>Departure Date</b></label>
-                    <input class="w3-input w3-border w3-margin-bottom" type="date" placeholder="Enter departure time" name="departure_time" id="departure_time" required>
+                    <input class="w3-input w3-border w3-margin-bottom" type="date" placeholder="Enter departure time" name="departure_day" id="departure_day" required>
 
                     <button class="w3-button w3-block w3-green w3-section w3-padding" id="add_button" type="submit">Book</button>
                 </div>
               </form>
+
                 <div class="w3-section" id="terminals_to_be_added1">
                     
 
@@ -134,6 +135,7 @@
         <footer class="w3-container">
             <p><b>Note</b> : Here we have displayed the complete list of terminals or stops in between the route.</p>
             <p>If what you opted is reversed of what we show you here then please select the reverse route while booking.</p>
+            <p>The advanced booking includes the booking upto 30 days from the current day.</p>
         </footer>
     
     

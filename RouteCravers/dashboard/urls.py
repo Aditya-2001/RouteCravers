@@ -22,7 +22,7 @@ urlpatterns = [
     path('addons/view/terminal/details/',views.terminals,name="terminals"),
     path('bookings/new/get/',views.get_new_booking,name="get_new_booking"),
     path('bookings/new/create/',views.create_new_booking,name="create_new_booking"),
-    
+    path('bookings/new/check/seat/availability/',views.new_booking_confirm,name="new_booking_confirm"),
     
     
 ]

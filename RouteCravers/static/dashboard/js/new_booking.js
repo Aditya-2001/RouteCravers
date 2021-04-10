@@ -10,8 +10,14 @@ $("#routes").submit(function (e) {
             data=response.data
             data=JSON.parse(data)
             n=Object.keys(data).length
+            document.getElementById("layoutAuthentication_content").style.display="none"
+            document.getElementById("parent").innerHTML=""
             if(n==0){
                 message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body">Sorry! No Route Found</div></div></div>'
+                $("#parent").append(message)
+            }
+            else{
+                message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body">'+n+' Routes found!!!</div></div></div>'
                 $("#parent").append(message)
             }
             $("#parent").append("")
@@ -141,6 +147,7 @@ function get_day(id){
 bus_schedules=[]
 stops=[]
 terminals=[]
+my_data=[]
 
 function book(id){
     var serializedData = 'id='+ id
@@ -153,7 +160,7 @@ function book(id){
             terminals=JSON.parse(response.terminals)
             stops=JSON.parse(response.stops)
             bus_schedules=JSON.parse(response.bus_schedules)
-
+            my_data=data
 
             n=Object.keys(stops).length
             document.getElementById("source_stop").innerHTML=""
@@ -161,7 +168,7 @@ function book(id){
             for(var i=0;i<n;i++){
                 var x= document.getElementById("source_stop")
                 var option= document.createElement("option")
-                option.value=stops[i].fields.pk
+                option.value=stops[i].pk
                 id=parseInt(stops[i].fields.terminal)
                 n1=Object.keys(terminals).length
                 var name_=""
@@ -184,7 +191,7 @@ function book(id){
             for(var i=0;i<n;i++){
                 var x= document.getElementById("destination_stop")
                 var option= document.createElement("option")
-                option.value=stops[i].fields.pk
+                option.value=stops[i].pk
                 id=parseInt(stops[i].fields.terminal)
                 n1=Object.keys(terminals).length
                 var name_=""
@@ -209,7 +216,7 @@ function book(id){
             for(var i=0;i<n;i++){
                 var x= document.getElementById("bus")
                 var option= document.createElement("option")
-                option.value=bus_schedules[i].fields.pk
+                option.value=bus_schedules[i].pk
                 if(bus_schedules[i].fields.reverse_route==false){
                     reverse_route="No"
                 }
@@ -221,8 +228,8 @@ function book(id){
                 option.innerHTML=bus_schedules[i].fields.bus+" , Rs."+bus_schedules[i].fields.fare+" , Number="+bus_schedules[i].fields.bus_number+" , "+terminal_code+" , "+departure_day+" , "+bus_schedules[i].fields.departure_time+" , Reverse Route : "+reverse_route
                 x.appendChild(option)
             }
-
-
+            document.getElementById("seats_booked").value=0
+            document.getElementById("date_wise_schedule").value=data.pk
             document.getElementById("book_entry").style.display="block"
         },
         error: function (response) {
@@ -250,7 +257,7 @@ $("#submit_form").submit(function (e) {
     var serializedData = $(this).serialize();
     $.ajax({
         type: 'POST',
-        url: "",
+        url: "check/seat/availability/",
         data: serializedData,
         success: function (response) {
             alert("Ticket Booked Successfully")
@@ -263,9 +270,72 @@ $("#submit_form").submit(function (e) {
             document.getElementById("message1").innerHTML=response["responseJSON"]["error"];
             $('#message1').fadeIn();
             $('#message1').delay(4000).fadeOut(4000);
+            alert(response["responseJSON"]["error"])
         }
     })
 })
+
+selected_bus=[]
+
+function  cal_fare(){
+    source_stop=document.getElementById("source_stop").value
+    destination_stop=document.getElementById("destination_stop").value
+    if(source_stop==destination_stop){
+        document.getElementById("fare").value=0
+        return ;
+    }
+    bus_selc=document.getElementById("bus").value
+    seats_opted=document.getElementById("seats_booked").value
+
+    total_dis=parseInt(my_data.fields.distance)
+    n=Object.keys(stops).length
+    source_distance=0
+    for(var i=0;i<n;i++){
+        if(parseInt(source_stop)==parseInt(stops[i].pk)){
+            source_distance=parseInt(stops[i].fields.distance_from_source)
+            break;
+        }
+    }
+    destination_distance=0
+    for(var i=0;i<n;i++){
+        if(parseInt(destination_stop)==parseInt(stops[i].pk)){
+            destination_distance=parseInt(stops[i].fields.distance_from_source)
+            break;
+        }
+    }
+    new_distance=destination_distance-source_distance
+    
+    fare=0
+    n=Object.keys(bus_schedules).length
+    bus_is_reverse=false
+    for(var i=0;i<n;i++){
+        if(parseInt(bus_selc)==parseInt(bus_schedules[i].pk)){
+            fare=parseInt(bus_schedules[i].fields.fare)
+            selected_bus=bus_schedules[i].fields
+            bus_is_reverse=bus_schedules[i].fields.reverse_route
+            break;
+        }
+    }
+
+    if(seats_opted<1){
+        fare=0
+    }
+
+
+    new_fare=new_distance/total_dis*fare*(parseInt(seats_opted))
+    if(new_fare<0){
+        if(bus_is_reverse==false){
+            alert("Hey!!!, the bus you selected runs on the reverse route of what you selected, choose another bus or another route")
+            document.getElementById("fare").value=new_fare
+        }
+        else{
+            document.getElementById("fare").value=0-new_fare
+        }
+    }
+    else{
+        document.getElementById("fare").value=new_fare
+    }
+}
 
 
 function validate(){
@@ -273,6 +343,43 @@ function validate(){
     destination_stop=document.getElementById("destination_stop").value
     if(source_stop==destination_stop){
         document.getElementById("message1").innerHTML="Source and Destination must be different.";
+        $('#message1').fadeIn();
+        $('#message1').delay(4000).fadeOut(4000);
+        return false;
+    }
+
+    seats_opted=document.getElementById("seats_booked").value
+    if(seats_opted<=0){
+        document.getElementById("message1").innerHTML="You must book minimum 1 seat.";
+        $('#message1').fadeIn();
+        $('#message1').delay(4000).fadeOut(4000);
+        return false;
+    }
+
+    fare=document.getElementById("fare").value
+    if(fare<=0){
+        document.getElementById("message1").innerHTML="Fare must be positive, you must selected the reverse route, please select the other bus which has its reverse route as what you opted now.";
+        $('#message1').fadeIn();
+        $('#message1').delay(4000).fadeOut(4000);
+        return false;
+    }
+
+    departure_day=document.getElementById("departure_day").value;
+    var d=new Date(departure_day);
+
+    if (!!d.valueOf()) {
+        day = d.getDay();
+        day_of_bus=parseInt(selected_bus.departure_day)%7
+        if(day!=day_of_bus){
+            scheduled_day=get_day(parseInt(selected_bus.departure_day))
+            document.getElementById("message1").innerHTML="Hey the bus you have seleted is scheduled on " + scheduled_day;
+            $('#message1').fadeIn();
+            $('#message1').delay(4000).fadeOut(4000);
+            return false;
+        }
+    } 
+    else{
+        document.getElementById("message1").innerHTML="Date is not in proper format.";
         $('#message1').fadeIn();
         $('#message1').delay(4000).fadeOut(4000);
         return false;
