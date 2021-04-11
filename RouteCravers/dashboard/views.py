@@ -560,21 +560,23 @@ def new_booking_confirm(request):
         
         try:
             source_stop=Stop.objects.get(id=int(request.POST.get('source_stop')))
-            destination_stop=Stop.objectes.get(id=int(request.POST.get('destination_stop')))
+            destination_stop=Stop.objects.get(id=int(request.POST.get('destination_stop')))
             bus=int(request.POST.get('bus'))
             seats_booked=int(request.POST.get('seats_booked'))
             fare=float(request.POST.get('fare'))
             date_wise_schedule=int(request.POST.get('date_wise_schedule'))
             departure_day=request.POST.get('departure_day')
+            #Actually its departure date, by mistake taken as day
         except:
             return JsonResponse({"error": "Invalid Detail Format Found"}, status=400)
         
         try:
-            schedule=BusSchedule.objects.get(id=date_wise_schedule)
+            schedule=BusSchedule.objects.get(id=bus)
         except:
             return JsonResponse({"error": "Scehdule Not Found"}, status=400)
         
         date_wise_schedule=get_date_wise_schedule(schedule,departure_day)
+
         date_wise_schedule.save()
         (seat_availability,date_wise_schedule)=is_seat_available(date_wise_schedule,source_stop.id,destination_stop.id,seats_booked,schedule.bus.seats,schedule.reverse_route)
         if seat_availability==False:
@@ -593,12 +595,12 @@ def new_booking_confirm(request):
     else:    
         return redirect('new_booking')
 
-def get_date_wise_schedule(schedule,departure_day):
-    stops=Stop.objects.filter(schedule=schedule).order_by('distance_from_source')
+def get_date_wise_schedule(schedule,departure_date):
+    stops=Stop.objects.filter(schedule=schedule.schedule).order_by('distance_from_source')
     try:
-        date_wise=DateWiseBusSchedule.objects.get(schedule=schedule,departure_day=departure_day)
+        date_wise=DateWiseBusSchedule.objects.get(schedule=schedule,departure_date=departure_date)
     except:
-        date_wise=DateWiseBusSchedule.objects.create(schedule=schedule,departure_day=departure_day)
+        date_wise=DateWiseBusSchedule.objects.create(schedule=schedule,departure_date=departure_date)
         date_wise.seats_opted=[0 for i in range(stops.count())]
         my_list=[]
         for each in stops:
@@ -637,6 +639,7 @@ def is_seat_available(date_wise_schedule,s,d,seats_booked,total_seats,reverse_ro
     if maximum+seats_booked+1<=total_seats:
         for i in range(start,end):
             date_wise_schedule.seats_opted[i]+=seats_booked
+        date_wise_schedule.seats_booked+=seats_booked
         date_wise_schedule.save()
         return (True,date_wise_schedule)
     else:
