@@ -618,7 +618,7 @@ def get_date_wise_schedule(schedule,departure_date):
             continue
         value=min(date_wise.seats_opted[index-1],date_wise.seats_opted[index])
         date_wise.stop_id.insert(index,each.id)
-        date_wise.seats_opted.insert(index,min(value))
+        date_wise.seats_opted.insert(index,value)
         index+=1
     date_wise.save()
     return date_wise
@@ -633,11 +633,11 @@ def is_seat_available(date_wise_schedule,s,d,seats_booked,total_seats,reverse_ro
         end=(date_wise_schedule.stop_id).index(int(s))+1
         start=(date_wise_schedule.stop_id).index(int(d))
     maximum=-1
-    for i in range(start,end):
+    for i in range(start,end-1):
         maximum=max(maximum,date_wise_schedule.seats_opted[i])
         
-    if maximum+seats_booked+1<=total_seats:
-        for i in range(start,end):
+    if maximum+seats_booked<=total_seats:
+        for i in range(start,end-1):
             date_wise_schedule.seats_opted[i]+=seats_booked
         date_wise_schedule.seats_booked+=seats_booked
         date_wise_schedule.save()
