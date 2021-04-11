@@ -333,7 +333,13 @@ function  cal_fare(){
         }
     }
     else{
-        document.getElementById("fare").value=new_fare
+        if(bus_is_reverse==true){
+            alert("Hey!!!, the bus you selected runs on the reverse route of what you selected, choose another bus or another route")
+            document.getElementById("fare").value=0-new_fare
+        }
+        else{
+            document.getElementById("fare").value=new_fare
+        }
     }
 }
 
@@ -384,4 +390,11 @@ function validate(){
         $('#message1').delay(4000).fadeOut(4000);
         return false;
     }
+}
+
+window.onload = function(){
+    var today = new Date().toISOString().split('T')[0];
+    var nextMonthDate = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    document.getElementsByName("departure_day")[0].setAttribute('min', today);
+    document.getElementsByName("departure_day")[0].setAttribute('max', nextMonthDate)
 }
