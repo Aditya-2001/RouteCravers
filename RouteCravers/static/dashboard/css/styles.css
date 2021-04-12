@@ -1,7 +1,8 @@
 .change_my_color:hover {
-    background-color: orange
+    background: linear-gradient(to bottom left, #caffb0 0%, #b4d9ff 99%);
 }
 
 .change_my_color:active {
-    background-color: rgb(145, 255, 72)
+    background: linear-gradient(to bottom left, #99ff66 0%, #3399ff 99%);
+    
 }

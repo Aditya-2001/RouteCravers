@@ -99,7 +99,7 @@ function show_details(id){
                 return ;
             }
             else{
-                message='<br><br><div class="row justify-content-center"><div class="card text-center col-lg-8 bg-info"><div class="card-body">Buses Available on this route</div></div></div><br>'
+                message='<br><br><div class="row justify-content-center"><div class="card text-center col-lg-8" style="background: linear-gradient(to bottom left, #78ff34 0%, #1188ff 99%);"><div class="card-body">Buses Available on this route</div></div></div><br>'
                 $("#terminals_to_be_added").append(message)
             }
             for(var i=0;i<n;i++){
