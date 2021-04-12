@@ -50,6 +50,8 @@ function show_details(id){
             stops=JSON.parse(response.stops)
             bus_schedules=JSON.parse(response.bus_schedules)
             n=Object.keys(stops).length
+            terminal_distance=[]
+            terminal_id=[]
             if(n==0){
                 message='<div class="row justify-content-center"><div class="card text-center col-lg-8  bg-danger"><div class="card-body">Sorry! No Stop Found</div></div></div>'
                 $("#terminals_to_be_added").append(message)
@@ -73,17 +75,18 @@ function show_details(id){
                     }
                 }
                 if(i==0){
-                    message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body">First Terminal of journey</div></div></div><br>'
+                    message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body" id="'+stops[i].pk+'">First Terminal of journey</div></div></div><br>'
                 }
                 else{
                     if(i==n-1){
-                        message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body">Distance Covered yet : '+ stops[i].fields.distance_from_source +' Km</div><div class="card-body">Last Terminal of journey</div></div></div><br>'
+                        message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body" id="'+stops[i].pk+'">Distance Covered yet : '+ stops[i].fields.distance_from_source +' Km</div><div class="card-body">Last Terminal of journey</div></div></div><br>'
                     }
                     else{
-                        message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body">Distance Covered yet : '+ stops[i].fields.distance_from_source +' Km</div></div></div><br>'
+                        message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>Terminal Name : '+name_+', Code : '+terminal_code+', City : '+city+' , State : '+state+'</div><div class="card-body" id="'+stops[i].pk+'">Distance Covered yet : '+ stops[i].fields.distance_from_source +' Km</div></div></div><br>'
                     }
                 }
-                
+                terminal_distance.push(stops[i].fields.distance_from_source)
+                terminal_id.push(stops[i].pk)
                 $("#terminals_to_be_added").append(message)
             }
             
@@ -96,7 +99,7 @@ function show_details(id){
                 return ;
             }
             else{
-                message='<br><br><div class="row justify-content-center"><div class="card text-center col-lg-8 bg-primary"><div class="card-body">Buses Available on this route</div></div></div><br>'
+                message='<br><br><div class="row justify-content-center"><div class="card text-center col-lg-8 bg-info"><div class="card-body">Buses Available on this route</div></div></div><br>'
                 $("#terminals_to_be_added").append(message)
             }
             for(var i=0;i<n;i++){
@@ -107,7 +110,7 @@ function show_details(id){
                     reverse_route="Yes"
                 }
                 departure_day=get_day(parseInt(bus_schedules[i].fields.departure_day))
-                message='<div class="row justify-content-center"><div class="card text-center col-lg-8"><div class="card-body" '+'>RTO Number : '+ bus_schedules[i].fields.bus +', Fare : Rs.'+bus_schedules[i].fields.fare+', Bus Number : '+bus_schedules[i].fields.bus_number+' , Available on : '+departure_day + ' '+bus_schedules[i].fields.departure_time +'</div><div class="card-body">For Reverse Route : '+ reverse_route +' </div></div></div><br>'
+                message='<div class="row justify-content-center"><div class="card text-center col-lg-8 change_my_color"><div onclick="set_timings(\''+bus_schedules[i].fields.departure_day+'\',\''+bus_schedules[i].fields.departure_time+'\',\''+terminal_distance+'\',\''+terminal_id+'\')" class="card-body" '+'>RTO Number : '+ bus_schedules[i].fields.bus +', Fare : Rs.'+bus_schedules[i].fields.fare+', Bus Number : '+bus_schedules[i].fields.bus_number+' , Available on : '+departure_day + ' '+bus_schedules[i].fields.departure_time +'</div><div class="card-body">For Reverse Route : '+ reverse_route +' </div></div></div><br>'
 
                 $("#terminals_to_be_added").append(message)
             }
@@ -397,4 +400,41 @@ window.onload = function(){
     var nextMonthDate = new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     document.getElementsByName("departure_day")[0].setAttribute('min', today);
     document.getElementsByName("departure_day")[0].setAttribute('max', nextMonthDate)
+}
+
+function set_timings(departure_day,departure_time,terminal_distance,terminal_id){
+    alert("Timing set for the bus you selected")
+
+    departure_time=departure_time.split(':')
+
+    terminal_distance=terminal_distance.split(',')
+    terminal_id=terminal_id.split(',')
+    n=Object.keys(terminal_id).length
+    
+    // Assume 60km/hr
+    speed=60
+    for(var i=0;i<n;i++){
+        html_content=document.getElementById(terminal_id[i]).innerHTML
+        if(html_content.includes(", Estimated")){
+            index=html_content.search(", Estimated")-1
+        }
+        else{
+            index=html_content.length
+        }
+        day=departure_day
+        extra_time=Math.floor(parseInt(terminal_distance[i])/speed)+1
+        day+=Math.floor(extra_time/24)
+        extra_time%=24
+
+        new_time=departure_time[0]+extra_time
+        day+=Math.floor(new_time/24)
+
+        new_time%=24
+        day%=7
+        
+        arrival=String(new_time)+":"+String(departure_time[1])
+
+        html_content=String(html_content.substring(0,index+1))+", Estimated Arrival : "+get_day(day)+", "+arrival
+        document.getElementById(terminal_id[i]).innerHTML=html_content
+    }
 }
