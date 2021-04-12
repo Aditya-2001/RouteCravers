@@ -432,35 +432,7 @@ def my_bookings(request,item):
     if request.user.is_authenticated:
         if request.user.is_staff == True:
             return redirect('dashboard')
-        if request.method == "POST" and request.is_ajax:
-            try:
-                type_=request.POST.get('type')
-                if int(type_)==1:
-                    schedule=Schedule.objects.get(id=int(request.POST.get('schedule')))
-                    terminal=Terminal.objects.get(id=int(request.POST.get('terminal')))
-                distance_from_source=float(request.POST.get('distance_from_source'))                    
-            except:
-                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
-            if int(type_)== 1:
-                try:
-                    Stop.objects.get(schedule=schedule, terminal=terminal)
-                    return JsonResponse({"error": "Hey!, at this schedule the terminal is already added."}, status=400)
-                except:
-                    pass
-                Stop.objects.create(schedule=schedule, terminal=terminal, distance_from_source=distance_from_source)
-                return JsonResponse({"success": ""}, status=200)
-            elif int(type_) == 2:
-                pk=int(request.POST.get('pk_id'))
-                try:
-                    details=Stop.objects.get(id=pk)
-                except:
-                    return JsonResponse({"error": "Stop with the given details donot exists"}, status=400)
-                details.distance_from_source=distance_from_source
-                details.save()
-                return JsonResponse({"success": ""}, status=200)
-            else:
-                return JsonResponse({"error": "Internal Error"}, status=400)
-        else:
+        if request.method == "GET":
             if int(item)==2:
                 data=UserTicket.objects.filter(user=request.user, date_of_booking__lt=datetime.datetime.now().date())
                 return render(request,"dashboard/past_bookings.html",context={"data": data})
@@ -630,7 +602,7 @@ def is_seat_available(date_wise_schedule,s,d,seats_booked,total_seats,reverse_ro
         start=(date_wise_schedule.stop_id).index(int(s))
         end=(date_wise_schedule.stop_id).index(int(d))+1
     else:
-        end=(date_wise_schedule.stop_id).index(int(s))+1
+        end=(date_wise_schedule.stop_id).index(int(s))-1
         start=(date_wise_schedule.stop_id).index(int(d))
     maximum=-1
     for i in range(start,end-1):
@@ -644,3 +616,25 @@ def is_seat_available(date_wise_schedule,s,d,seats_booked,total_seats,reverse_ro
         return (True,date_wise_schedule)
     else:
         return (False,date_wise_schedule)
+    
+def cancel_booking(request):
+    if request.method == "GET" and request.is_ajax:
+        if request.user.is_staff == True:
+            return redirect('dashboard')        
+        try:
+            ticket=UserTicket.objects.get(id=int(request.GET.get('id')))
+            if ticket.user!=request.user:
+                return JsonResponse({"error": "Booking not found"}, status=400)
+        except:
+            return JsonResponse({"error": "Booking not found"}, status=400)
+        
+        can_be_cancelled=cancel_ticket(ticket)
+        if can_be_cancelled==True:
+            return JsonResponse({"success": 0}, status=200)
+        else:
+            return JsonResponse({"error": "Ticket can't be cancelled because refund time has gone."}, status=400)
+    else:    
+        return redirect('my_bookings',1)
+    
+def cancel_ticket(ticket):
+    return False

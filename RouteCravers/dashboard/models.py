@@ -110,7 +110,7 @@ class UserTicket(models.Model):
     #2-cancelled
     #3-refunded
     #4-Completed
-    
+    refund_amount=models.FloatField(default=0.0)
     fare=models.FloatField(default=0.0)
     date_of_booking=models.DateField(default=datetime.datetime.now())
     

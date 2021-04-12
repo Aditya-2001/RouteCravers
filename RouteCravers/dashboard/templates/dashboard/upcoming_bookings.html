@@ -73,7 +73,7 @@
                                 {% endifequal %}
                             </td>
                             <td>{{each.date_of_booking}}</td>
-                            <td><button class="btn btn-danger" onclick="open_edit_modal({{each.id}})">Cancel</button></td>
+                            <td><button class="btn btn-danger" onclick="cancel_booking({{each.id}})">Cancel</button></td>
                         </tr>
                         {% endfor %}
                 </tbody>
