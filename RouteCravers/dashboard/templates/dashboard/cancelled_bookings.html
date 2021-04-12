@@ -1,11 +1,11 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% block heading %}
-    Upcoming Bookings
+    Cancelled Bookings
 {% endblock %}
 
 {% block path %}
-    Dashboard / Bookings / Upcoming
+    Dashboard / Bookings / Cancelled
 {% endblock %}
 
 {% block body %}
@@ -28,8 +28,7 @@
                         <th>Seats Booked</th>
                         <th>Fare</th>
                         <th>Booking Status</th>
-                        <th>Booking Date</th>
-                        <th>Action</th>
+                        <th>Refund Amount</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -43,14 +42,13 @@
                         <th>Seats Booked</th>
                         <th>Fare</th>
                         <th>Booking Status</th>
-                        <th>Booking Date</th>
-                        <th>Action</th>
+                        <th>Refund Amount</th>
                     </tr>
                 </tfoot>
                 <tbody>
                         {% for each in data %}
 
-                        {% ifequal each.booking_status 1 %}
+                        {% ifnotequal each.booking_status 1 %}
                         <tr id={{each.id}}>
                             <td>{{each.id}}</td>
                             <td>{{each.source_stop.terminal.name}}({{each.source_stop.terminal.terminal_code}})</td>
@@ -74,10 +72,9 @@
                                     Completed
                                 {% endifequal %}
                             </td>
-                            <td>{{each.date_of_booking}}</td>
-                            <td><button class="btn btn-danger" onclick="cancel_booking({{each.id}})">Cancel</button></td>
+                            <td>{{each.refund_amount}}</td>
                         </tr>
-                        {% endifequal %}
+                        {% endifnotequal %}
                         {% endfor %}
                 </tbody>
             </table>

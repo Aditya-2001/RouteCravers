@@ -434,11 +434,14 @@ def my_bookings(request,item):
             return redirect('dashboard')
         if request.method == "GET":
             if int(item)==2:
-                data=UserTicket.objects.filter(user=request.user, date_of_booking__lt=datetime.datetime.now().date())
+                data=UserTicket.objects.filter(user=request.user, date_wise_schedule__departure_date__lt=datetime.datetime.now().date())
                 return render(request,"dashboard/past_bookings.html",context={"data": data})
             if int(item)==1:
-                data=UserTicket.objects.filter(user=request.user, date_of_booking__gte=datetime.datetime.now().date())
+                data=UserTicket.objects.filter(user=request.user, date_wise_schedule__departure_date__gte=datetime.datetime.now().date())
                 return render(request,"dashboard/upcoming_bookings.html",context={"data": data})
+            if int(item)==3:
+                data=UserTicket.objects.filter(user=request.user)
+                return render(request,"dashboard/cancelled_bookings.html",context={"data": data})
             return redirect('home')
     else:
         return redirect('home')
@@ -641,7 +644,7 @@ def cancel_ticket(ticket):
 
     if (arrival_time-datetime.datetime.now()).total_seconds()<0 or ticket.booking_status!=1:
         return False
-    time_gap=(arrival_time-datetime.datetime.now()).total_seconds()/86400
+    time_gap=(arrival_time-datetime.datetime.now()).total_seconds()/3600
     if time_gap<ticket.date_wise_schedule.schedule.bus.details.no_refund_time:
         return False
     refund_percentage=ticket.date_wise_schedule.schedule.bus.details.refund_percentage
@@ -650,6 +653,6 @@ def cancel_ticket(ticket):
         penalty=(ticket.date_wise_schedule.schedule.bus.details.addition_deduction_percentage * penalty_hr * 60)/ticket.date_wise_schedule.schedule.bus.details.addition_deduction_rate
         refund_percentage-=penalty
     ticket.booking_status=2
-    ticket.refund_amount=0.01*ticket.fare*refund_percentage
+    ticket.refund_amount=round(0.01*ticket.fare*refund_percentage,2)
     ticket.save()
     return True

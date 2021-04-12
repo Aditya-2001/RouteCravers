@@ -1,4 +1,7 @@
 function cancel_booking(id){
+    if(confirm("Are you sure to cancel booking?")==false){
+        return false
+    }
     var serializedData = 'id='+ id
     $.ajax({
         type: 'GET',
@@ -6,12 +9,7 @@ function cancel_booking(id){
         data: serializedData,
         success: function (response) {
             alert("Booking Cancelled")
-            // data=response.data
-            // data=JSON.parse(data)[0]
-            // document.getElementById("schedule1").value = data.fields.schedule
-            // document.getElementById("terminal1").value = data.fields.terminal
-            // document.getElementById("distance_from_source1").value = data.fields.distance_from_source
-            // document.getElementById("pk_id").value = id
+            document.getElementById(id).remove()
         },
         error: function (response) {
             alert(response["responseJSON"]["error"]);
