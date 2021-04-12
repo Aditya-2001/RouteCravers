@@ -637,4 +637,19 @@ def cancel_booking(request):
         return redirect('my_bookings',1)
     
 def cancel_ticket(ticket):
-    return False
+    arrival_time=datetime.datetime.combine(ticket.date_wise_schedule.departure_date,ticket.date_wise_schedule.schedule.departure_time)
+
+    if (arrival_time-datetime.datetime.now()).total_seconds()<0 or ticket.booking_status!=1:
+        return False
+    time_gap=(arrival_time-datetime.datetime.now()).total_seconds()/86400
+    if time_gap<ticket.date_wise_schedule.schedule.bus.details.no_refund_time:
+        return False
+    refund_percentage=ticket.date_wise_schedule.schedule.bus.details.refund_percentage
+    if time_gap<ticket.date_wise_schedule.schedule.bus.details.min_refund_time:
+        penalty_hr=ticket.date_wise_schedule.schedule.bus.details.min_refund_time-time_gap
+        penalty=(ticket.date_wise_schedule.schedule.bus.details.addition_deduction_percentage * penalty_hr * 60)/ticket.date_wise_schedule.schedule.bus.details.addition_deduction_rate
+        refund_percentage-=penalty
+    ticket.booking_status=2
+    ticket.refund_amount=0.01*ticket.fare*refund_percentage
+    ticket.save()
+    return True
