@@ -406,7 +406,6 @@ function set_timings(departure_day,departure_time,terminal_distance,terminal_id)
     alert("Timing set for the bus you selected")
 
     departure_time=departure_time.split(':')
-
     terminal_distance=terminal_distance.split(',')
     terminal_id=terminal_id.split(',')
     n=Object.keys(terminal_id).length
@@ -415,26 +414,31 @@ function set_timings(departure_day,departure_time,terminal_distance,terminal_id)
     speed=60
     for(var i=0;i<n;i++){
         html_content=document.getElementById(terminal_id[i]).innerHTML
-        if(html_content.includes(", Estimated")){
-            index=html_content.search(", Estimated")-1
+        if(html_content.includes("Estimated")){
+            index=html_content.search("Estimated")-1
         }
         else{
             index=html_content.length
         }
         day=departure_day
-        extra_time=Math.floor(parseInt(terminal_distance[i])/speed)+1
-        day+=Math.floor(extra_time/24)
-        extra_time%=24
+        extra_time=parseInt(terminal_distance[i])/speed
+        minutes=Math.floor((parseInt(terminal_distance[i])/speed - Math.floor(extra_time))*60)
 
-        new_time=departure_time[0]+extra_time
-        day+=Math.floor(new_time/24)
+        extra_time=Math.floor(extra_time)
+        
+        new_time=Math.floor(parseInt(departure_time[0])+extra_time + (parseInt(departure_time[1]) + minutes)/60)
+        day=Math.floor(day)+Math.floor(new_time/24)
+
+        minutes=Math.floor((parseInt(departure_time[1]) + minutes)%60)
 
         new_time%=24
-        day%=7
+        if(day>7){
+            day=day%7
+        }
         
-        arrival=String(new_time)+":"+String(departure_time[1])
+        arrival=String(new_time)+":"+String(minutes)
 
-        html_content=String(html_content.substring(0,index+1))+", Estimated Arrival : "+get_day(day)+", "+arrival
+        html_content=String(html_content.substring(0,index+1))+"<br>Estimated Arrival : "+get_day(day)+", "+arrival
         document.getElementById(terminal_id[i]).innerHTML=html_content
     }
 }
