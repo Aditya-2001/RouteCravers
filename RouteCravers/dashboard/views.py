@@ -644,15 +644,17 @@ def cancel_ticket(ticket):
 
     if (arrival_time-datetime.datetime.now()).total_seconds()<0 or ticket.booking_status!=1:
         return False
-    time_gap=(arrival_time-datetime.datetime.now()).total_seconds()/3600
+    time_gap=(arrival_time-datetime.datetime.now()).total_seconds()/60
     if time_gap<ticket.date_wise_schedule.schedule.bus.details.no_refund_time:
         return False
     refund_percentage=ticket.date_wise_schedule.schedule.bus.details.refund_percentage
     if time_gap<ticket.date_wise_schedule.schedule.bus.details.min_refund_time:
-        penalty_hr=ticket.date_wise_schedule.schedule.bus.details.min_refund_time-time_gap
-        penalty=(ticket.date_wise_schedule.schedule.bus.details.addition_deduction_percentage * penalty_hr * 60)/ticket.date_wise_schedule.schedule.bus.details.addition_deduction_rate
+        penalty_min=ticket.date_wise_schedule.schedule.bus.details.min_refund_time-time_gap
+        penalty=(ticket.date_wise_schedule.schedule.bus.details.addition_deduction_percentage * penalty_min)/ticket.date_wise_schedule.schedule.bus.details.addition_deduction_rate
         refund_percentage-=penalty
     ticket.booking_status=2
     ticket.refund_amount=round(0.01*ticket.fare*refund_percentage,2)
+    if ticket.refund_amount<=0:
+        return False
     ticket.save()
     return True
