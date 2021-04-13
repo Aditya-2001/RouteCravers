@@ -722,7 +722,7 @@ def staff(request):
         Email_thread(subject,message,email).start()
         return JsonResponse({"success": ""}, status=200)
     else:
-        data=User.objects.filter(is_active=True, is_staff=True, is_superuser=False)
+        data=User.objects.filter(is_staff=True, is_superuser=False)
         return render(request,"dashboard/staff.html",context={"data": data})
     
 def create_password(n):
@@ -732,3 +732,24 @@ def create_password(n):
         password += digits[math.floor(random.random() * 62)]
     password+='@'
     return password
+
+def delete_staff(request):
+    if request.user.is_authenticated==False:
+        return redirect('home')
+    if request.user.is_superuser==False:
+        return redirect('dashboard')
+    if request.method=="GET" and request.is_ajax:
+        ID=request.GET.get('id')
+        try:
+            user=User.objects.get(id=ID)
+        except:
+            return JsonResponse({"error": "Account not found"}, status=400)
+        if user.is_active==True:
+            user.is_active=False
+        else:
+            user.is_active=True
+        user.save()
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        logout(request)
+        return redirect("home")

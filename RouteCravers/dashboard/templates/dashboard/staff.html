@@ -24,6 +24,8 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -32,6 +34,8 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -41,6 +45,8 @@
                             <td>{{each.username}}</td>
                             <td>{{each.email}}</td>
                             <td>{{each.first_name}} {{each.last_name}}</td>
+                            <td id={{each.id}}>{% if each.is_active %}Active{% else %}Disabled{% endif %}</td>
+                            <td><button class="btn btn-danger" onclick="change_status({{each.id}})">Change Status</button></td>
                         </tr>
                         {% endfor %}
                 </tbody>

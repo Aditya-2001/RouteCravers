@@ -117,10 +117,12 @@
                                     User Tickets
                                 </a>
                                 <div class="sb-sidenav-menu-heading">STAFF ACTIVITY</div>
-                                <a class="nav-link" href="{% url 'staff' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                    Staff Accounts
-                                </a>
+                                {% if request.user.is_superuser %}
+                                    <a class="nav-link" href="{% url 'staff' %}">
+                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                        Staff Accounts
+                                    </a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>

@@ -17,6 +17,8 @@ $("#add_form").submit(function (e) {
                     <td>`+document.getElementById("username").value+`</td>
                     <td>`+document.getElementById("email").value+`</td>
                     <td>`+document.getElementById("first_name").value + " " + document.getElementById("last_name").value +`</td>
+                    <td>Active</td>
+                    <td>-</td>
                 </tr>    `
             tableBody.append(markup);
             $("#add_form").trigger('reset');
@@ -29,3 +31,26 @@ $("#add_form").submit(function (e) {
         }
     })
 })
+
+function change_status(id){
+    var serializedData = 'id='+ id
+    $.ajax({
+        type: 'GET',
+        url: "delete/",
+        data: serializedData,
+        success: function (response) {
+            if(document.getElementById(String(id)).innerHTML=="Active"){
+                document.getElementById(String(id)).innerHTML="Disabled"
+            }
+            else{
+                document.getElementById(String(id)).innerHTML="Active"
+            }
+            alert("Staff Account's Status Changed")
+        },
+        error: function (response) {
+            alert(response["responseJSON"]["error"]);
+            $('#message1').fadeIn();
+            $('#message1').delay(4000).fadeOut(4000);
+        }
+    })
+}
