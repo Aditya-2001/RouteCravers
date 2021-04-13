@@ -19,11 +19,22 @@ from django.core import serializers
 # Create your views here.
 def dashboard(request):
     if request.user.is_authenticated:
-        total_bookings=UserTicket.objects.filter(user=request.user).count()
-        cancelled_bookings=UserTicket.objects.filter(user=request.user,booking_status=2).count() + UserTicket.objects.filter(user=request.user,booking_status=3).count()
-        successful_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__lt=datetime.datetime.now().date()).count()
-        upcoming_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__gte=datetime.datetime.now().date()).count()
-        return render(request,"dashboard/dashboard.html",context={"total_bookings": total_bookings, "cancelled_bookings": cancelled_bookings, "successful_bookings": successful_bookings, "upcoming_bookings": upcoming_bookings})
+        if request.user.is_staff:
+            total_routes=BusSchedule.objects.all().count()
+            total_buses=Bus.objects.all().count()
+            total_stops=Stop.objects.all().count()
+            today_bookings=UserTicket.objects.filter(date_of_booking=datetime.datetime.now()).count()
+            total_users=User.objects.all().count()
+            passengers=User.objects.filter(is_staff=False, is_active=True).count()
+            staff=User.objects.filter(is_staff=True, is_active=True).count()
+            total_bookings=UserTicket.objects.all().count()
+            return render(request,"dashboard/dashboard.html",context={"total_routes": total_routes, "total_buses": total_buses, "total_stops": total_stops, "today_bookings": today_bookings, "total_users": total_users, "passengers": passengers, "staff": staff, "total_bookings": total_bookings})
+        else:
+            total_bookings=UserTicket.objects.filter(user=request.user).count()
+            cancelled_bookings=UserTicket.objects.filter(user=request.user,booking_status=2).count() + UserTicket.objects.filter(user=request.user,booking_status=3).count()
+            successful_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__lt=datetime.datetime.now().date()).count()
+            upcoming_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__gte=datetime.datetime.now().date()).count()
+            return render(request,"dashboard/dashboard.html",context={"total_bookings": total_bookings, "cancelled_bookings": cancelled_bookings, "successful_bookings": successful_bookings, "upcoming_bookings": upcoming_bookings})
     else:
         return redirect('home')
     
