@@ -26,6 +26,8 @@ urlpatterns = [
     path('bookings/new/check/seat/availability/',views.new_booking_confirm,name="new_booking_confirm"),
     path('staff/accounts/',views.staff,name="staff"),
     path('staff/accounts/delete/',views.delete_staff,name="delete_staff"),
+    path('password/change/',views.change_password,name="change_password"),
+    
     
     
     

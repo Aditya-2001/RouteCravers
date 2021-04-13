@@ -753,3 +753,19 @@ def delete_staff(request):
     else:
         logout(request)
         return redirect("home")
+    
+def change_password(request):
+    if request.user.is_authenticated==False:
+        return redirect('home')
+    if request.method=="POST" and request.is_ajax:
+        password=request.POST.get('password2')
+        user=request.user
+        user.set_password(password)
+        user.save()
+        subject = 'Password changed in RouteCravers'
+        message = f'Password has been successfully changed.'
+        Email_thread(subject,message,user.email).start()
+        logout(request)
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        return render(request,'dashboard/change_password.html',context={})
