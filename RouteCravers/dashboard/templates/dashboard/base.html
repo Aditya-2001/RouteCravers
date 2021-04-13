@@ -17,8 +17,9 @@
     </head>
     <body class="sb-nav-fixed">
         {% if request.user.is_authenticated %}
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'img/logo1.png' %}" style="width: 200px; margin-top: 7px;"></a>
+        <!-- style="background-image: linear-gradient(to left top, #3d2706, #493808, #524b0a, #566012, #547620);" -->
+        <nav class="sb-topnav navbar navbar-expand navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'home' %}" style="font-size: 2rem; color: rgb(27, 107, 145)">RouteCravers</a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
@@ -44,7 +45,7 @@
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
@@ -55,25 +56,25 @@
                             {% if request.user.is_staff %}{% else %}
                             <div class="sb-sidenav-menu-heading">BOOKING</div>
                                 <a class="nav-link" href="{% url 'new_booking' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-plus-square"></i></div>
                                     New Booking
                                 </a>    
                                 <a class="nav-link" href="{% url 'my_bookings' item='2' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
                                     Past Bookings
                                 </a>
                                 <a class="nav-link" href="{% url 'my_bookings' item='1' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-bus"></i></div>
                                     Upcoming Bookings
                                 </a>
                                 <a class="nav-link" href="{% url 'my_bookings' item='3' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-window-close"></i></div>
                                     Cancelled Bookings
                                 </a>
 
                             <div class="sb-sidenav-menu-heading">Extras</div>
                                 <a class="nav-link" href="{% url 'terminals' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-windows-close"></i></div>
                                     Terminals
                                 </a>
 
@@ -84,35 +85,35 @@
                             {% if request.user.is_staff %}
                                 <div class="sb-sidenav-menu-heading">TABLES</div>
                                 <a class="nav-link" href="{% url 'bus_details' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-info-circle"></i></div>
                                     Bus Details
                                 </a>
                                 <a class="nav-link" href="{% url 'terminal_details' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fab fa-tumblr"></i></div>
                                     Terminal Details
                                 </a>
                                 <a class="nav-link" href="{% url 'manage_buses' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-bus"></i></div>
                                     Manage Buses
                                 </a>
                                 <a class="nav-link" href="{% url 'manage_schedules' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-calendar"></i></div>
                                     Manage Schedules
                                 </a>
                                 <a class="nav-link" href="{% url 'manage_bus_schedules' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
                                     Manage Bus Schedules
                                 </a>
                                 <a class="nav-link" href="{% url 'manage_date_wise_bus_schedules' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-hourglass-start"></i></i></div>
                                     Date-Wise Bus Schedules
                                 </a>
                                 <a class="nav-link" href="{% url 'manage_stops' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fab fa-stripe-s"></i></div>
                                     Manage Stops
                                 </a>
                                 <a class="nav-link" href="{% url 'user_tickets' %}">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                    <div class="sb-nav-link-icon"><i class="fas fa-ticket-alt"></i></div>
                                     User Tickets
                                 </a>
                             {% endif %}
@@ -144,11 +145,11 @@
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
+                            <div class="text-muted">Copyright &copy; RouteCravers 2021</div>
                             <div>
-                                <a href="#">Privacy Policy</a>
+                                <a href="{% static 'txt/privacy_policy.txt' %}">Privacy Policy</a>
                                 &middot;
-                                <a href="#">Terms &amp; Conditions</a>
+                                <a href="{% static 'txt/terms_conditions.txt' %}">Terms &amp; Conditions</a>
                             </div>
                         </div>
                     </div>
