@@ -26,4 +26,5 @@ urlpatterns = [
     path('bookings/new/check/seat/availability/',views.new_booking_confirm,name="new_booking_confirm"),
     
     
+    
 ]

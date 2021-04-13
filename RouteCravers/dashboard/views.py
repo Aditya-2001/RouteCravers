@@ -19,7 +19,11 @@ from django.core import serializers
 # Create your views here.
 def dashboard(request):
     if request.user.is_authenticated:
-        return render(request,"dashboard/dashboard.html",context={})
+        total_bookings=UserTicket.objects.filter(user=request.user).count()
+        cancelled_bookings=UserTicket.objects.filter(user=request.user,booking_status=2).count() + UserTicket.objects.filter(user=request.user,booking_status=3).count()
+        successful_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__lt=datetime.datetime.now().date()).count()
+        upcoming_bookings=UserTicket.objects.filter(user=request.user, booking_status=1, date_wise_schedule__departure_date__gte=datetime.datetime.now().date()).count()
+        return render(request,"dashboard/dashboard.html",context={"total_bookings": total_bookings, "cancelled_bookings": cancelled_bookings, "successful_bookings": successful_bookings, "upcoming_bookings": upcoming_bookings})
     else:
         return redirect('home')
     
@@ -552,11 +556,14 @@ def new_booking_confirm(request):
         
         date_wise_schedule=get_date_wise_schedule(schedule,departure_day)
 
+        if date_wise_schedule.schedule.bus.seats<seats_booked:
+            return JsonResponse({"error": "Hey, number of seats you wanted to book exceeds the bus size"}, status=400)
+        
         date_wise_schedule.save()
         (seat_availability,date_wise_schedule)=is_seat_available(date_wise_schedule,source_stop.id,destination_stop.id,seats_booked,schedule.bus.seats,schedule.reverse_route)
         if seat_availability==False:
             return JsonResponse({"error": "Seats not available, wither try to reduce them or choose another bus"}, status=400)
-        date_wise_schedule.save()
+        
         
         UserTicket.objects.create(source_stop=source_stop,
                                   destination_stop=destination_stop,
@@ -658,3 +665,6 @@ def cancel_ticket(ticket):
         return False
     ticket.save()
     return True
+
+
+
