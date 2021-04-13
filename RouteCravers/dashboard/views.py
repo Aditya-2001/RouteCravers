@@ -17,6 +17,22 @@ from django.core import serializers
 # from .forms import *
 
 # Create your views here.
+
+class Email_thread(Thread):
+    def __init__(self,subject,message,email):
+        self.email=email
+        self.subject=subject
+        self.message=message
+        Thread.__init__(self)
+
+    def run(self):
+        SENDMAIL(self.subject,self.message,self.email)
+
+def SENDMAIL(subject, message, email):
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email, ]
+    send_mail( subject, message, email_from, recipient_list )
+    
 def dashboard(request):
     if request.user.is_authenticated:
         if request.user.is_staff:
@@ -677,5 +693,42 @@ def cancel_ticket(ticket):
     ticket.save()
     return True
 
-
-
+def staff(request):
+    if request.user.is_authenticated==False:
+        return redirect('home')
+    if request.user.is_superuser==False:
+        return redirect('dashboard')
+    if request.method=="POST" and request.is_ajax:
+        first_name=request.POST.get('first_name')
+        last_name=request.POST.get('last_name')
+        email=request.POST.get('email')
+        username=request.POST.get('username')
+        try:
+            User.objects.get(email=email)
+            return JsonResponse({"error": "Account with given email already exists"}, status=400)
+        except:
+            try:
+                User.objects.get(username=username)
+                return JsonResponse({"error": "Account with given username already exists"}, status=400)
+            except:
+                pass
+        user=User.objects.create(username=username,email=email,first_name=first_name,last_name=last_name)
+        password=create_password(25)
+        user.set_password(password)
+        user.is_staff=True
+        user.save()
+        subject="Staff Account Created"
+        message="Hey "+username+", a new staff account has been created in RouteCravers from your email.\nWe have provided with the login credentials.\nThe password is auto-generated so we recommend you to change ASAP.\nLogin Credentails:\nUsername: "+username+"\nPassword: "+password+"\n\nWe would love to have to as a staff in RouteCravers, we congratulate you again\nThanks"
+        Email_thread(subject,message,email).start()
+        return JsonResponse({"success": ""}, status=200)
+    else:
+        data=User.objects.filter(is_active=True, is_staff=True, is_superuser=False)
+        return render(request,"dashboard/staff.html",context={"data": data})
+    
+def create_password(n):
+    digits = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@#$!"
+    password = ""
+    for i in range(n) :
+        password += digits[math.floor(random.random() * 62)]
+    password+='@'
+    return password
