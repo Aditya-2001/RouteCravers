@@ -88,6 +88,10 @@
     {% endif %}
 </div>
 
+{% if request.user.is_staff %}
+
+{% else %}
+
 <div class="row">
     <div class="col-xl-8 col-md-3">
     <div class="card mb-4">
@@ -100,6 +104,8 @@
     </div>
     </div>
 </div>
+
+{% endif %}
 
 
 
