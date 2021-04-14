@@ -15,6 +15,7 @@ from threading import *
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.generic import View
+# import json
 
 from .utils import render_to_pdf
 
@@ -561,6 +562,38 @@ def get_new_booking(request):
 def create_new_booking(request):
     return JsonResponse({"success": ""}, status=200)
 
+
+def new_booking_left(request):
+    if request.method=="GET" and request.is_ajax:
+        try:
+            schedule=Schedule.objects.get(id=int(request.GET['id']))
+            date=request.GET['date']
+            bs=BusSchedule.objects.get(id=int(request.GET['bus_id']))
+            source_stop=int(request.GET['source_stop'])
+            destination_stop=int(request.GET['destination_stop'])
+        except:
+            return JsonResponse({"error": "Details Not Found"}, status=400)
+        try:
+            date_wise_sc=DateWiseBusSchedule.objects.get(schedule=bs, departure_date=date)
+            print("Found\n\n\n\n")
+        except:
+            return JsonResponse({"seats_left": bs.bus.seats}, status=200)
+        
+        try:
+            seats_left=date_wise_sc.schedule.bus.seats
+            start=(date_wise_sc.stop_id).index(source_stop)
+            end=(date_wise_sc.stop_id).index(destination_stop)
+            maximum=0
+            for i in range(min(start, end), max(start, end)):
+                if maximum<date_wise_sc.seats_opted[i]:
+                    maximum=date_wise_sc.seats_opted[i]
+            seats_left-=maximum
+            return JsonResponse({"seats_left": seats_left}, status=200)
+        except:
+            return JsonResponse({"seats_left": bs.bus.seats}, status=400)
+    else:
+        return redirect('dashboard')
+
 def new_booking_confirm(request):
     if request.method == "POST" and request.is_ajax:
         if request.user.is_staff == True:
@@ -794,4 +827,7 @@ class GeneratePDF(View):
         pdf = render_to_pdf('dashboard/invoice.html', data)
         # return render(request, 'dashboard/invoice.html', context={"ticket": ticket})
         return HttpResponse(pdf, content_type='application/pdf')
+    
+    
+
     

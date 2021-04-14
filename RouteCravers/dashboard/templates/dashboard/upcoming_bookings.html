@@ -30,6 +30,7 @@
                         <th>Booking Status</th>
                         <th>Booking Date</th>
                         <th>Action</th>
+                        <th>#</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -45,6 +46,7 @@
                         <th>Booking Status</th>
                         <th>Booking Date</th>
                         <th>Action</th>
+                        <th>#</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -75,8 +77,8 @@
                                 {% endifequal %}
                             </td>
                             <td>{{each.date_of_booking}}</td>
-                            <td><button class="btn btn-danger" onclick="cancel_booking({{each.id}})">Cancel</button>
-                                <a href="{% url 'generate_pdf' item=each.id %}" class="btn btn-success" >Invoice</a></td>
+                            <td><button class="btn btn-danger" onclick="cancel_booking({{each.id}})">Cancel</button></td>
+                            <td><a href="{% url 'generate_pdf' item=each.id %}" class="btn btn-success" >Invoice</a></td>
                         </tr>
                         {% endifequal %}
                         {% endfor %}

@@ -151,9 +151,11 @@ bus_schedules=[]
 stops=[]
 terminals=[]
 my_data=[]
+schedule_id=0
 
 function book(id){
     var serializedData = 'id='+ id
+    schedule_id=id
     $.ajax({
         type: 'GET',
         url: "get/",
@@ -281,6 +283,9 @@ $("#submit_form").submit(function (e) {
 selected_bus=[]
 
 function  cal_fare(){
+    if(set_seats_left()==false)
+        document.getElementById("seats_lefted").innerHTML="iyg"
+
     source_stop=document.getElementById("source_stop").value
     destination_stop=document.getElementById("destination_stop").value
     if(source_stop==destination_stop){
@@ -344,6 +349,28 @@ function  cal_fare(){
             document.getElementById("fare").value=new_fare
         }
     }
+}
+
+function set_seats_left(){
+
+    date=document.getElementById("departure_day").value
+    bus_id=document.getElementById("bus").value
+    source=document.getElementById("source_stop").value
+    destination=document.getElementById("destination_stop").value
+    ajax_data={'id': schedule_id, 'date': date, 'bus_id': bus_id, 'source_stop': source, 'destination_stop': destination}
+    $.ajax({
+        type: 'GET',
+        url: "check/seat/left/",
+        data: ajax_data,
+        dataType: "json",
+        success: function (response) {
+            data=JSON.parse(response.seats_left)
+            document.getElementById("seats_lefted").innerHTML=" , "+String(data)+" seats left"
+        },
+        error: function (response) {
+            
+        }
+    })
 }
 
 
