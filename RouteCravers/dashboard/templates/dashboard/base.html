@@ -76,6 +76,10 @@
                                     <div class="sb-nav-link-icon"><i class="fas fa-windows-close"></i></div>
                                     Terminals
                                 </a>
+                                <a class="nav-link" href="{% url 'see_bus_schedules' %}">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-calendar"></i></div>
+                                    Bus Schedules
+                                </a>
 
                             {% endif %}
 
@@ -118,7 +122,7 @@
                                 <div class="sb-sidenav-menu-heading">STAFF ACTIVITY</div>
                                 {% if request.user.is_superuser %}
                                     <a class="nav-link" href="{% url 'staff' %}">
-                                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                        <div class="sb-nav-link-icon"><i class="fas fa-user-circle"></i></div>
                                         Staff Accounts
                                     </a>
                                 {% endif %}

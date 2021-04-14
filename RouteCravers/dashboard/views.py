@@ -769,3 +769,10 @@ def change_password(request):
         return JsonResponse({"success": ""}, status=200)
     else:
         return render(request,'dashboard/change_password.html',context={})
+    
+    
+def see_bus_schedules(request):
+    if request.user.is_authenticated==False:
+        return redirect('home')
+    data=BusSchedule.objects.all()
+    return render(request,'dashboard/see_bus_schedules.html',context={"data": data})
