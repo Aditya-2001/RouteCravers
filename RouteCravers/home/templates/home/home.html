@@ -60,21 +60,33 @@
 						<li><a href="#home" class="page-scroll">
 									<h3>Home</h3>
 								</a></li>
-						<li><a href="#four" class="page-scroll">
-								<h3>Book Now</h3>
+						<li><a href="#two" class="page-scroll">
+								<h3>About</h3>
 							</a></li>
-						<li><a href="#seven" class="page-scroll">
+						<li><a href="#one" class="page-scroll">
+								<h3>Inspiration</h3>
+							</a></li>
+						<li><a href="#three" class="page-scroll">
 								<h3>Services</h3>
 							</a></li>
-						<li><a href="#eight" class="page-scroll">
-									<h3>Query</h3>
-								</a></li>
-						<li><a href="#one" class="page-scroll">
-								<h3>About Us</h3>
-							</a></li>
-						<li><a href="#two" class="page-scroll">
+						<li><a href="#four" class="page-scroll">
 								<h3>Contact</h3>
 							</a></li>
+						{% if request.user.is_authenticated %}
+						<li><a href="{% url 'dashboard' %}" class="page-scroll">
+							<h3>Dashboard</h3>
+						</a></li>
+						<li><a href="{% url 'logout_request' %}" class="page-scroll">
+							<h3>Logout</h3>
+						</a></li>
+						{% else %}
+						<li><a href="{% url 'login_request' %}" class="page-scroll">
+								<h3>Login</h3>
+							</a></li>
+						<li><a href="{% url 'signup' %}" class="page-scroll">
+								<h3>Signup</h3>
+							</a></li>
+						{% endif %}
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -90,33 +102,17 @@
 					<div class="row">
 						<div class="main-heading-content col-md-12 col-sm-12 text-center">
 							<h1 class="main-heading-title"><span class="main-element themecolor" data-elements=" Plan Your, Plan Your, Plan Your"></span></h1>
-							<h1 class="main-heading-title"><span class="main-element themecolor" data-elements=" Trip With Us, Trip With Us, Trip With Us"></span></h1>
+							<h1 class="main-heading-title"><span class="main-element themecolor" data-elements=" Trip With Us Now, Trip With Us Now, Trip With Us Now"></span></h1>
 							<p class="main-heading-text">WELCOME TO,<br />ONLINE BUS SEAT RESERVATION</p>
 							<div class="btn-bar">
-								{% if request.user.is_authenticated %}
-								<a href="{% url 'dashboard' %}" class="btn btn-custom theme_background_color">
-									Dashboard
-								</a>
-								<a href="{% url 'logout_request' %}" class="btn btn-custom-outline">
-									Logout
-								</a>
-								{% else %}
-								<a href="{% url 'login_request' %}" class="btn btn-custom theme_background_color">
-										<h3>Login</h3>
-									</a>
-									<a href="{% url 'signup' %}" class="btn btn-custom-outline">
-										<h3>Signup</h3>
-									</a>
-								{% endif %}
-								<!-- <a href="#" class="btn btn-custom theme_background_color">Ge Started</a>
-								<a href="#" class="btn btn-custom-outline">Contact Us</a> -->
+								<a href="reserved.php" class="btn btn-custom theme_background_color">Reserve Now</a>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
-		<!-- <section class="main-heading" id="home">
+		<section class="main-heading" id="home">
 			<div class="overlay">
 				<div class="container">
 					<div class="row">
@@ -133,8 +129,47 @@
 					</div>
 				</div>
 			</div>
-		</section> -->
+		</section>
 		<!-- [/MAIN-HEADING]
+============================================================================================================================-->
+		<!-- [ABOUT US]
+============================================================================================================================-->
+		<section class="aboutus white-background black" id="one">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 text-center black">
+						<h3 class="title">ABOUT <span class="themecolor">US</span></h3>
+						<p class="a-slog">Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty</p>
+					</div>
+				</div>
+				<div class="gap">
+				</div>
+				<div class="row about-box">
+					<div class="col-sm-4 text-center">
+						<div class="margin-bottom">
+							<i class="fa fa-newspaper-o"></i>
+							<h4>POWER OF FLEXIBILITY</h4>
+							<p class="black">Nulla vitae libero pharetra augue. Etiam porta malesuada magna mollis euismod consectetur sem urdom tempus porttitor.</p>
+						</div> <!-- / margin -->
+					</div> <!-- /col -->
+					<div class="col-sm-4 about-line text-center">
+						<div class="margin-bottom">
+							<i class="fa fa-diamond"></i>
+							<h4>FULLY RESPONSIVE</h4>
+							<p class="black">Nulla vitae libero pharetra augue. Etiam porta malesuada magna mollis euismod consectetur sem urdom tempus porttitor.</p>
+						</div> <!-- / margin -->
+					</div><!-- /col -->
+					<div class="col-sm-4 text-center">
+						<div class="margin-bottom">
+							<i class="fa fa-area-chart"></i>
+							<h4>GREAT WEB IDEAS</h4>
+							<p class="black">Nulla vitae libero pharetra augue. Etiam porta malesuada magna mollis euismod consectetur sem urdom tempus porttitor.</p>
+						</div> <!-- / margin -->
+					</div><!-- /col -->
+				</div> <!-- /row -->
+			</div>
+		</section>
+		<!-- [/ABOUTUS]
 ============================================================================================================================-->
 		<!-- [INSPIRATION]
 ============================================================================================================================-->
@@ -148,10 +183,10 @@
 									<h4>Are You Ready To <span class="themecolor">Enjoy?</span></h4>
 								</div>
 								<div class="heading">
-									<h2>BOOK YOUR SEATS NOW!</h2>
+									<h2>inspire your customer here!</h2>
 								</div>
 								<div class="">
-									<a class="btn btn-custom-outline" href="#"><span>Reserve</span></a>
+									<a class="btn btn-custom-outline" href="#"><span>get started</span></a>
 								</div>
 							</div>
 						</article>
@@ -177,7 +212,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-diamond"></i>
 							<div class="nim-service-detail">
-								<h4>Safe Travels</h4>
+								<h4>Strategy Solutions</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -195,7 +230,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-magic"></i>
 							<div class="nim-service-detail">
-								<h4>Safe Transactions</h4>
+								<h4>SEO</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -206,7 +241,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-rocket"></i>
 							<div class="nim-service-detail">
-								<h4>Reliable</h4>
+								<h4>Graphic Design</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -215,7 +250,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-map-marker"></i>
 							<div class="nim-service-detail">
-								<h4>Low Cost Travels</h4>
+								<h4>Analystics</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -235,7 +270,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-bar-chart-o"></i>
 							<div class="nim-service-detail">
-								<h4>Excellent Refundable Policy</h4>
+								<h4>Truly Multipurpose</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -244,7 +279,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-delicious"></i>
 							<div class="nim-service-detail">
-								<h4>Truly Understand You</h4>
+								<h4>Unlimited Colors</h4>
 								<p>We put a lot of effort in design, as it’s the most important ingredient of successful website.Sed ut perspiciatis unde omnis iste natus error sit.</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -253,7 +288,7 @@
 						<div class="nim-service margin-bottom">
 							<i class="fa fa-pencil-square"></i>
 							<div class="nim-service-detail">
-								<h4>Easy to Navigate</h4>
+								<h4>Easy to customize</h4>
 								<p>Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty dolor site amet ne onseceruter adipiscing</p>
 							</div> <!-- /nim-service-detail -->
 						</div> <!-- /nim-service margin-bottom -->
@@ -269,8 +304,8 @@
 		<section class="sub-form text-center" id="eight">
 			<div class="container">
 				<div class="col-md-12">
-					<h3 class="title"><span class="themecolor">Post Query</span></h3>
-					<p class="lead">Feel free to post your query to us, hope to resolve them soon</p>
+					<h3 class="title">Subscribe to our <span class="themecolor"> News letter</span></h3>
+					<p class="lead">Lorem ipsum dolor sit amet ne onsectetuer adipiscing elit. Aenean commodo ligula eget dolor in tashin ty</p>
 				</div>
 				<div class="row">
 					<div class="col-md-3 col-sm-3"></div>
@@ -279,7 +314,7 @@
 							<div class="input-group">
 								<input type="email" class="form-control" placeholder="Email Address" required id="mc-email">
 								<span class="input-group-btn">
-									<button type="submit" class="btn btn-default">POST <i class="fa fa-envelope"></i> </button>
+									<button type="submit" class="btn btn-default">SUBSCRIBE <i class="fa fa-envelope"></i> </button>
 								</span>
 							</div>
 							<label for="mc-email" id="mc-notification"></label>
@@ -291,45 +326,6 @@
 		<!--sub-form end-->
 		<!-- [/CONTACT]
 ============================================================================================================================-->
-	<!-- [ABOUT US]
-	============================================================================================================================-->
-	<section class="aboutus white-background black" id="one">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 text-center black">
-					<h3 class="title">ABOUT <span class="themecolor">US</span></h3>
-					<p class="a-slog">The journey of a thousand miles begins with one step.</p>
-				</div>
-			</div>
-			<div class="gap">
-			</div>
-			<div class="row about-box">
-				<div class="col-sm-4 text-center">
-					<div class="margin-bottom">
-						<i class="fa fa-newspaper-o"></i>
-						<h4>IDEA</h4>
-						<p class="black">Nurtured from the seed of a single great idea - to empower the traveller - RouteCravers is a pioneer in India’s online travel industry.</p>
-					</div> <!-- / margin -->
-				</div> <!-- /col -->
-				<div class="col-sm-4 about-line text-center">
-					<div class="margin-bottom">
-						<i class="fa fa-diamond"></i>
-						<h4>JOURNEY SO FAR</h4>
-						<p class="black">RouteCravers has proactively diversified its product offering, adding a variety of online and offline products and services. RouteCravers has stayed ahead of the curve by continually evolving its technology to meet the ever-changing demands of the rapidly developing global travel market, steadily establishing itself as India’s leading online travel company.</p>
-					</div> <!-- / margin -->
-				</div><!-- /col -->
-				<div class="col-sm-4 text-center">
-					<div class="margin-bottom">
-						<i class="fa fa-area-chart"></i>
-						<h4>VISION</h4>
-						<p class="black">We believe that the strength of our brand, the quality of our services, our user-friendly websites, our customer centric approach, as well as our efficient marketing programs have enabled us to develop significant market share in the domestic Bus ticket business in India.</p>
-					</div> <!-- / margin -->
-				</div><!-- /col -->
-			</div> <!-- /row -->
-		</div>
-	</section>
-	<!-- [/ABOUTUS]
-============================================================================================================================-->
 		<!-- [FOOTER]
 ============================================================================================================================-->
 		<footer class="site-footer section-spacing text-center " id="eight">
@@ -338,14 +334,13 @@
 					<div class="col-md-4">
 						<p class="footer-links"><a href="#">Terms of Use</a> <a href="#">Privacy Policy</a></p>
 					</div>
-					<div class="col-md-4"> <small>&copy; 2021, Brought To You By RouteCravers</small></div>
+					<div class="col-md-4"> <small>&copy; 2018, Brought To You By <a href="https://code-projects.org/">code-projects.org</a> </small></div>
 					<div class="col-md-4">
 						<!--social-->
 						<ul class="social">
-							<li><a href="https://mobile.twitter.com/AtulSingh7376" target="_blank"><i class="fa fa-twitter "></i></a></li>
-							<li><a href="https://www.facebook.com/aditya.aggarwal.980315/" target="_blank"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="https://www.linkedin.com/in/divy-agrawal-531a411a4/" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-							<li><a href="https://www.instagram.com/divy_agrawal1/" target="_blank"><i class="fa fa-instagram"></i></a></li>
+							<li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter "></i></a></li>
+							<li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook"></i></a></li>
+							<li><a href="https://www.youtube.com/" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
 						</ul>
 						<!--social end-->
 					</div>

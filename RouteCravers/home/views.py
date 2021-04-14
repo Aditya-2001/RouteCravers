@@ -244,3 +244,6 @@ def new_password(request):
         return JsonResponse({"success": ""}, status=200)
     else:
         return redirect('home')
+    
+def error_404(request, exception):
+    return redirect('home')
