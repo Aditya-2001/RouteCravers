@@ -14,7 +14,9 @@ from django.http import FileResponse
 from threading import *
 from django.http import JsonResponse
 from django.core import serializers
-# from .forms import *
+from django.views.generic import View
+
+from .utils import render_to_pdf
 
 # Create your views here.
 
@@ -776,3 +778,20 @@ def see_bus_schedules(request):
         return redirect('home')
     data=BusSchedule.objects.all()
     return render(request,'dashboard/see_bus_schedules.html',context={"data": data})
+
+class GeneratePDF(View):
+    def get(self, request, item,  *args, **kwargs):
+        try:
+            ticket=UserTicket.objects.get(id=int(item))
+        except:
+            return HttpResponse("Ticket Not Found")
+        if ticket.user!=request.user or ticket.booking_status!=1:
+            return HttpResponse("Ticket Not Found")
+        data = {
+             'ticket': ticket,
+             'request': request
+        }
+        pdf = render_to_pdf('dashboard/invoice.html', data)
+        # return render(request, 'dashboard/invoice.html', context={"ticket": ticket})
+        return HttpResponse(pdf, content_type='application/pdf')
+    

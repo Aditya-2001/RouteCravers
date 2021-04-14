@@ -8,5 +8,6 @@ whitenoise==5.2.0
 django-twilio==0.13.1
 twilio==6.50.1
 django-mysql==3.11.1
+xhtml2pdf==0.2.5
 # psycopg2==2.8.6
 # postgresql==9.4

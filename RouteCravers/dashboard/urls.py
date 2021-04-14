@@ -28,7 +28,6 @@ urlpatterns = [
     path('staff/accounts/delete/',views.delete_staff,name="delete_staff"),
     path('password/change/',views.change_password,name="change_password"),
     path('schedule/bus/',views.see_bus_schedules,name="see_bus_schedules"),
-    
-    
+    path(r'pdf/<str:item>',views.GeneratePDF.as_view(),name="generate_pdf"),
     
 ]
