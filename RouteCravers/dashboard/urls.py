@@ -30,5 +30,6 @@ urlpatterns = [
     path('password/change/',views.change_password,name="change_password"),
     path('schedule/bus/',views.see_bus_schedules,name="see_bus_schedules"),
     path(r'pdf/<str:item>',views.GeneratePDF.as_view(),name="generate_pdf"),
-    
+    path('manage/bookings/cancelled/',views.manage_refund,name="manage_refund"),
+    path('manage/bookings/cancelled/refund/',views.manage_refund_amount,name="manage_refund_amount")
 ]

@@ -575,7 +575,6 @@ def new_booking_left(request):
             return JsonResponse({"error": "Details Not Found"}, status=400)
         try:
             date_wise_sc=DateWiseBusSchedule.objects.get(schedule=bs, departure_date=date)
-            print("Found\n\n\n\n")
         except:
             return JsonResponse({"seats_left": bs.bus.seats}, status=200)
         
@@ -829,5 +828,33 @@ class GeneratePDF(View):
         return HttpResponse(pdf, content_type='application/pdf')
     
     
-
+def manage_refund(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "GET":
+            data=UserTicket.objects.filter(booking_status=2)
+            return render(request,"dashboard/manage_refund.html",context={"data": data})
+        
+    else:
+        return redirect('home')
     
+def manage_refund_amount(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff == False:
+            return redirect('dashboard')
+        if request.method == "GET" and request.is_ajax:
+            try:
+                ticket=UserTicket.objects.get(id=int(request.GET.get('id')))               
+            except:
+                return JsonResponse({"error": "Invalid Details Entered"}, status=400)
+            if ticket.booking_status != 2:
+                return JsonResponse({"error": "Illegal action"}, status=400)
+            ticket.booking_status=3
+            ticket.save()
+            return JsonResponse({"success": ""}, status=200)
+        else:
+            return redirect('home')
+        
+    else:
+        return redirect('home')
