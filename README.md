@@ -10,6 +10,7 @@ How to install project (For developers only):<br>
   5.) Now cd RouteCravers/RouteCravers<br>
   6.) In settings.py change debug mode to True for changing code for awesome updations only.<br>
   7.) Project will be successfully installed, run python manage.py runserver   or   py manage.py runserver to run project.<br>
+  8.) Also run python3 manage.py process_tasks while ticket booking
 <br><br>
 How to push project:<br>
   1.) After changing the code section , change debug mode to False.<br>
