@@ -15,6 +15,8 @@ from threading import *
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.generic import View
+from background_task import background
+
 # import json
 
 from .utils import render_to_pdf
@@ -592,6 +594,15 @@ def new_booking_left(request):
             return JsonResponse({"seats_left": bs.bus.seats}, status=400)
     else:
         return redirect('dashboard')
+    
+class Payment(Thread):
+    def __init__(self,ticket):
+        self.ticket=ticket
+        Thread.__init__(self)
+
+    def run(self):
+        check_payment_status(self.ticket, schedule=120 + int(settings.MAX_WAIT_TIME_FOR_PAYMENT*60))
+        # check_payment_status(self.ticket, schedule=int(settings.MAX_WAIT_TIME_FOR_PAYMENT*60))
 
 def new_booking_confirm(request):
     if request.method == "POST" and request.is_ajax:
@@ -626,14 +637,14 @@ def new_booking_confirm(request):
             return JsonResponse({"error": "Seats not available, wither try to reduce them or choose another bus"}, status=400)
         
         
-        UserTicket.objects.create(source_stop=source_stop,
+        ticket=UserTicket.objects.create(source_stop=source_stop,
                                   destination_stop=destination_stop,
                                   user=request.user,
                                   date_wise_schedule=date_wise_schedule,
                                   seats_booked=seats_booked,
-                                  booking_status=1,
                                   fare=fare)
-        
+        ticket.save()
+        Payment(int(ticket.id)).start()
         return JsonResponse({"success": ""}, status=200)
     else:    
         return redirect('new_booking')
@@ -725,7 +736,24 @@ def cancel_ticket(ticket):
     if ticket.refund_amount<=0:
         return False
     ticket.save()
+    add_cancelled_tickets(ticket)
     return True
+
+def add_cancelled_tickets(ticket):
+    s=ticket.source_stop.id
+    d=ticket.destination_stop.id
+    if ticket.date_wise_schedule.schedule.reverse_route==False:
+        start=(ticket.date_wise_schedule.stop_id).index(int(s))
+        end=(ticket.date_wise_schedule.stop_id).index(int(d))+1
+    else:
+        end=(ticket.date_wise_schedule.stop_id).index(int(s))-1
+        start=(ticket.date_wise_schedule.stop_id).index(int(d))
+
+    date_wise_schedule=ticket.date_wise_schedule
+    for i in range(start,end-1):
+        date_wise_schedule.seats_opted[i]-=ticket.seats_booked
+    date_wise_schedule.seats_booked-=ticket.seats_booked
+    date_wise_schedule.save()
 
 def staff(request):
     if request.user.is_authenticated==False:
@@ -858,3 +886,32 @@ def manage_refund_amount(request):
         
     else:
         return redirect('home')
+    
+@background(schedule=60)
+def check_payment_status(ticket_id):
+    try:
+        ticket=UserTicket.objects.get(id=int(ticket_id))
+    except:
+        pass
+    if ticket.booking_status==0:
+        # s=ticket.source_stop.id
+        # d=ticket.destination_stop.id
+        # if ticket.date_wise_schedule.schedule.reverse_route==False:
+        #     start=(ticket.date_wise_schedule.stop_id).index(int(s))
+        #     end=(ticket.date_wise_schedule.stop_id).index(int(d))+1
+        # else:
+        #     end=(ticket.date_wise_schedule.stop_id).index(int(s))-1
+        #     start=(ticket.date_wise_schedule.stop_id).index(int(d))
+
+        # date_wise_schedule=DateWiseBusSchedule.objects.get(id=ticket.date_wise_schedule.id)
+        # for i in range(start,end-1):
+        #     date_wise_schedule.seats_opted[i]-=ticket.seats_booked
+        # date_wise_schedule.seats_booked-=ticket.seats_booked
+        # date_wise_schedule.save()
+        add_cancelled_tickets(ticket)
+        ticket.delete()
+    else:
+        ticket.booking_status=1
+        ticket.save()
+    
+    

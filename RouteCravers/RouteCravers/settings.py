@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'dashboard',
+    'background_task',
     
 ]
 
@@ -142,3 +143,6 @@ PHONE_NUMBER_TWILIO = '+17737565047'
 
 OTP_EXPIRE_TIME=16
 FARE_PER_KM=10
+
+MAX_WAIT_TIME_FOR_PAYMENT=5
+#in minutes
