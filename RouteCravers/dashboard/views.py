@@ -645,7 +645,7 @@ def new_booking_confirm(request):
                                   fare=fare)
         ticket.save()
         Payment(int(ticket.id)).start()
-        return JsonResponse({"success": ""}, status=200)
+        return JsonResponse({"ticket_id": ticket.id}, status=200)
     else:    
         return redirect('new_booking')
 
@@ -892,7 +892,7 @@ def check_payment_status(ticket_id):
     try:
         ticket=UserTicket.objects.get(id=int(ticket_id))
     except:
-        pass
+        return 0
     if ticket.booking_status==0:
         # s=ticket.source_stop.id
         # d=ticket.destination_stop.id
@@ -915,3 +915,21 @@ def check_payment_status(ticket_id):
         ticket.save()
     
     
+    
+def save_bill_status(request):
+    if request.method == "POST" and request.is_ajax:
+        if request.user.is_staff == True:
+            return redirect('dashboard')
+        
+        try:
+            ticket=UserTicket.objects.get(id=int(request.POST.get('myticket')))
+        except:
+            return JsonResponse({"error": "Session Expired and Ticket Deleted"}, status=400)
+        
+        if ticket.booking_status == 0 and ticket.user==request.user:
+            ticket.booking_status=1
+            ticket.save()
+        
+        return JsonResponse({"success": ""}, status=200)
+    else:    
+        return redirect('new_booking')

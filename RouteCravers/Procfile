@@ -1,1 +1,2 @@
 web: python manage.py collectstatic --no-input; gunicorn RouteCravers.wsgi --log-file - --log-level debug
+worker: python3 manage.py process_tasks

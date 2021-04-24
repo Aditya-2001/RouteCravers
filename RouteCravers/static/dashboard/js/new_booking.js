@@ -253,6 +253,10 @@ function close_book_entry(){
     document.getElementById("terminals_to_be_added1").innerHTML=""
 }
 
+function close_pay_bill(){
+    document.getElementById("pay_bill").style.display="none"
+}
+
 $("#submit_form").submit(function (e) {
     e.preventDefault();
     if(validate()==false){
@@ -265,10 +269,15 @@ $("#submit_form").submit(function (e) {
         url: "check/seat/availability/",
         data: serializedData,
         success: function (response) {
-            alert("Ticket Booked Successfully")
+            document.getElementById("book_entry").style.display="none"
             document.getElementById("add_button").disabled = false;
+            document.getElementById("total_bill").value=document.getElementById("fare").value
+            ticket_id=JSON.parse(response.ticket_id)
+            document.getElementById("myticket").value=String(ticket_id)
+            document.getElementById("request_time").value=String(new Date)
             $("#submit_form").trigger('reset');
-            location.reload();
+            document.getElementById("pay_bill").style.display="block"
+            start_process()
         },
         error: function (response) {
             document.getElementById("add_button").disabled = false;
@@ -282,7 +291,7 @@ $("#submit_form").submit(function (e) {
 
 selected_bus=[]
 
-function  cal_fare(){
+function cal_fare(){
     if(set_seats_left()==false)
         document.getElementById("seats_lefted").innerHTML="iyg"
 
@@ -328,7 +337,6 @@ function  cal_fare(){
     if(seats_opted<1){
         fare=0
     }
-
 
     new_fare=new_distance/total_dis*fare*(parseInt(seats_opted))
     if(new_fare<0){
@@ -468,4 +476,47 @@ function set_timings(departure_day,departure_time,terminal_distance,terminal_id)
         html_content=String(html_content.substring(0,index+1))+"<br>Estimated Arrival : "+get_day(day)+", "+arrival
         document.getElementById(terminal_id[i]).innerHTML=html_content
     }
+}
+
+
+$("#pay_bill_form").submit(function (e) {
+    e.preventDefault();
+    document.getElementById("pay_fare").disabled = true;
+    var serializedData = $(this).serialize();
+    $.ajax({
+        type: 'POST',
+        url: "bill/payment/save/status/",
+        data: serializedData,
+        success: function (response) {
+            alert("Ticket Booked Successfully")
+            document.getElementById("pay_fare").disabled = false;
+            $("#pay_bill_form").trigger('reset');
+            location.reload()
+        },
+        error: function (response) {
+            document.getElementById("pay_fare").disabled = false;
+            document.getElementById("message2").innerHTML=response["responseJSON"]["error"];
+            $('#message2').fadeIn();
+            $('#message2').delay(4000).fadeOut(4000);
+        }
+    })
+})
+
+function start_process(){
+    setInterval(function() {
+        this_time=new Date
+        last_time=new Date(document.getElementById("request_time").value)
+        diff=(this_time-last_time)/1000
+        if(diff>=600) {
+            alert("Session Expired and Ticket cancelled, try to book again.")
+            location.reload()
+        }
+        else{
+            diff=600-diff
+            minutes=Math.floor(diff/60)
+            seconds=diff-minutes*60
+            time_left=String(minutes)+":"+String(parseInt(seconds))
+            document.getElementById("time_left").value=time_left
+        }
+    }, 500)
 }
