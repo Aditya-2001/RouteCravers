@@ -16,3 +16,5 @@ How to push project:<br>
   1.) After changing the code section , change debug mode to False.<br>
   2.) Now run python manage.py collectstatic.<br>
   3.) Now run ur push command as usual.<br>
+
+Note: The app we deployed on heroku runs on free account so it do not provide background activity server , this means ticket cancellation process at that side would be somewhat with difficulty and with improper logic. If you had cloned the project and want to deploy then make sure python3 manage.py process_tasks runs in the background. Refer to https://devcenter.heroku.com/articles/clock-processes-python for heroku premium account.
