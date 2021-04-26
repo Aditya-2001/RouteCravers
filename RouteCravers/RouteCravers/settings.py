@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Run python3 manage.py process_tasks
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -142,7 +143,7 @@ PHONE_ACCOUNT_AUTH_TOKEN_TWILIO = '5d8023dfc538060aa968afe037b637ec'
 PHONE_NUMBER_TWILIO = '+17737565047'
 
 OTP_EXPIRE_TIME=16
-FARE_PER_KM=10
+FARE_PER_KM=1.26
 
 MAX_WAIT_TIME_FOR_PAYMENT=10
 #in minutes
