@@ -450,10 +450,10 @@ function set_timings(departure_day,departure_time,terminal_distance,terminal_id)
     for(var i=0;i<n;i++){
         html_content=document.getElementById(terminal_id[i]).innerHTML
         if(html_content.includes("Estimated")){
-            index=html_content.search("Estimated")-1
+            index=html_content.search("Estimated")-2
         }
         else{
-            index=html_content.length
+            index=html_content.length-1
         }
         day=departure_day
         extra_time=parseInt(terminal_distance[i])/speed
@@ -473,7 +473,7 @@ function set_timings(departure_day,departure_time,terminal_distance,terminal_id)
         
         arrival=String(new_time)+":"+String(minutes)
 
-        html_content=String(html_content.substring(0,index+1))+"<br>Estimated Arrival : "+get_day(day)+", "+arrival
+        html_content=String(html_content.substring(0,index+1))+"<br><br>Estimated Arrival : "+get_day(day)+", "+arrival
         document.getElementById(terminal_id[i]).innerHTML=html_content
     }
 }

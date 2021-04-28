@@ -624,7 +624,9 @@ def new_booking_confirm(request):
         try:
             schedule=BusSchedule.objects.get(id=bus)
         except:
-            return JsonResponse({"error": "Scehdule Not Found"}, status=400)
+            return JsonResponse({"error": "Schedule Not Found"}, status=400)
+        if datetime.datetime.strptime(departure_day, '%Y-%m-%d').date() <= datetime.datetime.now().date() and schedule.departure_time < datetime.datetime.now().time():
+            return JsonResponse({"error": "Hey, you can't book a bus who had already departed"}, status=400)
         
         date_wise_schedule=get_date_wise_schedule(schedule,departure_day)
 
@@ -634,7 +636,7 @@ def new_booking_confirm(request):
         date_wise_schedule.save()
         (seat_availability,date_wise_schedule)=is_seat_available(date_wise_schedule,source_stop.id,destination_stop.id,seats_booked,schedule.bus.seats,schedule.reverse_route)
         if seat_availability==False:
-            return JsonResponse({"error": "Seats not available, wither try to reduce them or choose another bus"}, status=400)
+            return JsonResponse({"error": "Seats not available, either try to reduce them or choose another bus"}, status=400)
         
         
         ticket=UserTicket.objects.create(source_stop=source_stop,
