@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'home',
     'dashboard',
     'background_task',
-    
+
 ]
 
 MIDDLEWARE = [
