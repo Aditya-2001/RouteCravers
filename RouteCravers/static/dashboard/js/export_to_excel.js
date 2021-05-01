@@ -83,3 +83,10 @@ function exportToExcel(tableID){
         downloadurl.click();
     }
 }
+
+
+function export_to_xlsx(id){
+        $(id).table2excel({
+            filename: "data.xlsx"
+        });
+    }
