@@ -15,6 +15,10 @@
         Bus-Stop Details Table
         <button onclick="document.getElementById('add_entry').style.display='block'" class="btn btn-sm btn-primary" style="float: right;">Add</button>
     </div>
+    <div class="card-header">
+        <button onclick="export_table_data_csv()" class="btn btn-sm btn-info" style="float: right;">Export csv</button>
+        <button onclick="export_table_data_xls()" class="btn btn-sm btn-info" style="float: right; margin-right: 2rem;">Export xls</button>
+    </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
